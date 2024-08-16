@@ -1,7 +1,7 @@
 {
   "src": [
-    "pages/Index",
     "pages/splash/GuidePage",
-    "pages/splash/PrivacyPage"
+    "pages/splash/PrivacyPage",
+    "pages/webview/BaseWebPage"
   ]
 }

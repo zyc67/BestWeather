@@ -1,3 +1,4 @@
 export const TOP_NAVI_HEIGHT = 'top_navi_height'
+export const BOTTOM_AVOID_AREA_HEIGHT = 'bottom_avoid_area_height'
 export const BW_PREFERENCES_NAME = 'bw_preferences_name'
 export const HAS_GUIDE = 'has_guide'
