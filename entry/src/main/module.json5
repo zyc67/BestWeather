@@ -31,7 +31,8 @@
               "action.system.home"
             ]
           }
-        ]
+        ],
+//        "removeMissionAfterTerminate": true
       }
     ],
     "extensionAbilities": [
@@ -46,6 +47,35 @@
             "resource": "$profile:backup_config"
           }
         ],
+      }
+    ],
+    "requestPermissions": [
+      {
+        "name": "ohos.permission.INTERNET"
+      },
+      {
+        "name": "ohos.permission.LOCATION",
+        "reason": "$string:location_desc",
+        "usedScene": {
+          "abilities": ["entry"],
+          "when": "inuse"
+        }
+      },
+      {
+        "name": "ohos.permission.APPROXIMATELY_LOCATION",
+        "reason": "$string:location_desc",
+        "usedScene": {
+          "abilities": ["entry"],
+          "when": "inuse"
+        }
+      },
+      {
+        "name": "ohos.permission.LOCATION_IN_BACKGROUND",
+        "reason": "$string:location_desc",
+        "usedScene": {
+          "abilities": ["entry"],
+          "when": "inuse"
+        }
       }
     ]
   }

@@ -2,6 +2,8 @@
   "src": [
     "pages/splash/GuidePage",
     "pages/splash/PrivacyPage",
-    "pages/webview/BaseWebPage"
+    "pages/webview/BaseWebPage",
+    "pages/splash/SelectThemePage",
+    "pages/main/MainPage"
   ]
 }

@@ -2,7 +2,8 @@ import { AbilityConstant, UIAbility, Want } from '@kit.AbilityKit';
 import { hilog } from '@kit.PerformanceAnalysisKit';
 import { window } from '@kit.ArkUI';
 import { BusinessError } from '@kit.BasicServicesKit';
-import { BOTTOM_AVOID_AREA_HEIGHT, HAS_GUIDE, TOP_NAVI_HEIGHT } from '@bw/common/src/main/ets/constant/Constant';
+import { BOTTOM_AVOID_AREA_HEIGHT, HAS_GUIDE, TOP_NAVI_HEIGHT, HAS_PRIVACY,
+  HAS_SELECT_THEME } from '@bw/common/src/main/ets/constant/Constant';
 import { PFUtils } from '@bw/common';
 
 export default class EntryAbility extends UIAbility {
@@ -19,11 +20,16 @@ export default class EntryAbility extends UIAbility {
     hilog.info(0x0000, 'testTag', '%{public}s', 'Ability onWindowStageCreate');
 
     const hasGuide = await PFUtils.get(HAS_GUIDE, false, this.context)
-    // let page = 'pages/splash/GuidePage'
-    // if (hasGuide) {
-    //   page = 'pages/splash/PrivacyPage'
-    // }
-    let page = 'pages/webview/BaseWebPage'
+    const hasPrivacy = await PFUtils.get(HAS_PRIVACY, false, this.context)
+    const hasSelectTheme = await PFUtils.get(HAS_SELECT_THEME, false, this.context)
+    let page = 'pages/main/MainPage'
+    if (!hasGuide) {
+      page = 'pages/splash/GuidePage'
+    } else if (!hasPrivacy) {
+      page = 'pages/splash/PrivacyPage'
+    } else if (!hasSelectTheme) {
+      page = 'pages/splash/SelectThemePage'
+    }
     windowStage.loadContent(page, (err) => {
       if (err.code) {
         hilog.error(0x0000, 'testTag', 'Failed to load the content. Cause: %{public}s', JSON.stringify(err) ?? '');

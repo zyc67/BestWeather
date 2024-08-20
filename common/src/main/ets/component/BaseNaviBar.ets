@@ -1,3 +1,5 @@
+import { RouterUtils } from '../utils'
+
 @Component
 export struct BaseNaviBar {
 
@@ -30,10 +32,13 @@ export struct BaseNaviBar {
           Image(this.leftIcon ? this.leftIcon : $r('app.media.icon_left_arrow'))
             .height(24)
             .objectFit(ImageFit.Contain)
+            .onClick(() => {
+              RouterUtils.back()
+            })
         }
         .width('20%')
         .justifyContent(FlexAlign.Start)
-        .backgroundColor(Color.Yellow)
+        // .backgroundColor(Color.Yellow)
       }
 
       // 中间
@@ -49,7 +54,7 @@ export struct BaseNaviBar {
           .fontSize(24)
           .width('60%')
           .textAlign(TextAlign.Center)
-          .backgroundColor(Color.Red)
+          // .backgroundColor(Color.Red)
           .maxLines(1)
           .textOverflow({
             overflow: TextOverflow.Ellipsis
@@ -63,7 +68,7 @@ export struct BaseNaviBar {
         }
         .justifyContent(FlexAlign.End)
         .width('20%')
-        .backgroundColor(Color.Yellow)
+        // .backgroundColor(Color.Yellow)
       } else if (this.rightTitle) {
         Row() {
           Text(this.rightTitle)
@@ -73,7 +78,7 @@ export struct BaseNaviBar {
         .width('20%')
         .height(24)
         .justifyContent(FlexAlign.End)
-        .backgroundColor(Color.Yellow)
+        // .backgroundColor(Color.Yellow)
       } else if (this.rightIcon) {
         Row() {
           Image(this.rightIcon)
@@ -83,11 +88,11 @@ export struct BaseNaviBar {
         .width('20%')
         .height(24)
         .justifyContent(FlexAlign.End)
-        .backgroundColor(Color.Yellow)
+        // .backgroundColor(Color.Yellow)
       } else {
         Blank()
           .width('20%')
-          .backgroundColor(Color.Yellow)
+          // .backgroundColor(Color.Yellow)
       }
     }
     .padding({
