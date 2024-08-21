@@ -76,7 +76,10 @@
           "abilities": ["entry"],
           "when": "inuse"
         }
-      }
+      },
+//      {
+//        "name": "ohos.permission.sec.ACCESS_UDID"
+//      },
     ]
   }
 }

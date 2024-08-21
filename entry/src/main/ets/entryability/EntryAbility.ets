@@ -3,7 +3,9 @@ import { hilog } from '@kit.PerformanceAnalysisKit';
 import { window } from '@kit.ArkUI';
 import { BusinessError } from '@kit.BasicServicesKit';
 import { BOTTOM_AVOID_AREA_HEIGHT, HAS_GUIDE, TOP_NAVI_HEIGHT, HAS_PRIVACY,
-  HAS_SELECT_THEME } from '@bw/common/src/main/ets/constant/Constant';
+  HAS_SELECT_THEME,
+  SCREEN_WIDTH,
+  SCREEN_HEIGHT} from '@bw/common/src/main/ets/constant/Constant';
 import { PFUtils } from '@bw/common';
 
 export default class EntryAbility extends UIAbility {
@@ -28,7 +30,7 @@ export default class EntryAbility extends UIAbility {
     } else if (!hasPrivacy) {
       page = 'pages/splash/PrivacyPage'
     } else if (!hasSelectTheme) {
-      page = 'pages/splash/SelectThemePage'
+      page = 'pages/city/CityAddPage'
     }
     windowStage.loadContent(page, (err) => {
       if (err.code) {
@@ -55,7 +57,19 @@ export default class EntryAbility extends UIAbility {
       let bottomRectHeight = avoidArea.bottomRect.height // 获取到导航条区域的高度
       AppStorage.setOrCreate(BOTTOM_AVOID_AREA_HEIGHT, bottomRectHeight)
 
-      windowClass.getWindowProperties()
+      const windowProp = windowClass.getWindowProperties()
+      let w = px2vp(windowProp.windowRect.width).toFixed()
+      let h = px2vp(windowProp.windowRect.height).toFixed()
+
+      AppStorage.setOrCreate(SCREEN_WIDTH, w)
+      AppStorage.setOrCreate(SCREEN_HEIGHT, h)
+
+      windowClass.on('windowSizeChange',(windowSize) => {
+        w = px2vp(windowSize.width).toFixed()
+        h = px2vp(windowSize.height).toFixed()
+        AppStorage.setOrCreate(SCREEN_WIDTH, w)
+        AppStorage.setOrCreate(SCREEN_HEIGHT, h)
+      })
       hilog.info(0x0000, 'testTag', 'Succeeded in loading the content.');
     });
   }

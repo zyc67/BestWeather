@@ -4,6 +4,7 @@
     "pages/splash/PrivacyPage",
     "pages/webview/BaseWebPage",
     "pages/splash/SelectThemePage",
-    "pages/main/MainPage"
+    "pages/main/MainPage",
+    "pages/city/CityAddPage"
   ]
 }
