@@ -60,7 +60,7 @@ export class HttpManager {
     } else if (respType == 1) { // gzip
       let jsonStr = pako.inflate(res.data, { to: 'string' }) as string
       console.log('接口返回'+jsonStr)
-      return JSON.parse(pako.inflate(res.data, { to: 'string' }) as string) as T
+      return JSON.parse(jsonStr) as T
     } else {
       return Promise.resolve(res.data)
     }

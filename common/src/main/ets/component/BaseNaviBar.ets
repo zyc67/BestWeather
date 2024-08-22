@@ -1,11 +1,14 @@
+import { TOP_NAVI_HEIGHT } from '../constant/Constant'
 import { RouterUtils } from '../utils'
 
 @Component
 export struct BaseNaviBar {
-
+  private topRectHeight = px2vp(AppStorage.get<number>(TOP_NAVI_HEIGHT) || 0)
   @BuilderParam leftBuilder: () => void
   @BuilderParam titleBuilder: () => void
   @BuilderParam rightBuilder: () => void
+
+  canBack: boolean = true
 
   leftTitle: string = ''
   title: string = ''
@@ -17,28 +20,32 @@ export struct BaseNaviBar {
   build() {
     Row() {
       // 左边
-      if (this.leftBuilder) {
-        Row() {
-          this.leftBuilder()
-        }
-        .width('20%')
-      } else if (this.leftTitle) {
-        Text(this.leftTitle)
-          .fontColor('#2C2C2C')
-          .fontSize(16)
+      if (this.canBack) {
+        if (this.leftBuilder) {
+          Row() {
+            this.leftBuilder()
+          }
           .width('20%')
-      } else {
-        Row() {
-          Image(this.leftIcon ? this.leftIcon : $r('app.media.icon_left_arrow'))
-            .height(24)
-            .objectFit(ImageFit.Contain)
-            .onClick(() => {
-              RouterUtils.back()
-            })
+        } else if (this.leftTitle) {
+          Text(this.leftTitle)
+            .fontColor('#2C2C2C')
+            .fontSize(16)
+            .width('20%')
+        } else {
+          Row() {
+            Image(this.leftIcon ? this.leftIcon : $r('app.media.icon_left_arrow'))
+              .height(24)
+              .objectFit(ImageFit.Contain)
+              .onClick(() => {
+                RouterUtils.back()
+              })
+          }
+          .width('20%')
+          .justifyContent(FlexAlign.Start)
+          // .backgroundColor(Color.Yellow)
         }
-        .width('20%')
-        .justifyContent(FlexAlign.Start)
-        // .backgroundColor(Color.Yellow)
+      } else {
+        Row().width('20%')
       }
 
       // 中间
@@ -97,10 +104,11 @@ export struct BaseNaviBar {
     }
     .padding({
       left: 16,
-      right: 16
+      right: 16,
+      top: this.topRectHeight
     })
     .width('100%')
-    .height(50)
+    .height(50 + this.topRectHeight)
   }
 }
 
