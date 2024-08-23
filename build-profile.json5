@@ -1,6 +1,20 @@
 {
   "app": {
-    "signingConfigs": [],
+    "signingConfigs": [
+      {
+        "name": "default",
+        "type": "HarmonyOS",
+        "material": {
+          "storePassword": "0000001C18E0D174E3627B62D115FFA8C27F015AEEBE65B8B200749A5C3037C61E69472EA8356302498BA8E3",
+          "certpath": "/Users/weather/Desktop/BestWeather/cerKey/zmtq_harmony_debug.cer",
+          "keyAlias": "zmtq",
+          "keyPassword": "0000001CA61E87D4DA220EB8049F586E40DDA095432522490442889174323C8F08D4948DAFECE473B755918A",
+          "profile": "/Users/weather/Desktop/BestWeather/cerKey/zmtq_harmony_debug.p7b",
+          "signAlg": "SHA256withECDSA",
+          "storeFile": "/Users/weather/Desktop/BestWeather/cerKey/zuimeiweather_harmony.p12"
+        }
+      }
+    ],
     "products": [
       {
         "name": "default",
