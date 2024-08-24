@@ -46,7 +46,7 @@ struct PrivacyPage {
     customStyle: true
   })
   private topRectHeight = px2vp(AppStorage.get<number>(TOP_NAVI_HEIGHT) || 0)
-  private bottomRectHeight = AppStorage.get<number>(BOTTOM_AVOID_AREA_HEIGHT) || 0
+  private bottomRectHeight = px2vp(AppStorage.get<number>(BOTTOM_AVOID_AREA_HEIGHT) || 0)
   permissions: PrivacyModel[] = [
     {
       icon: $r('app.media.img_location_info'),

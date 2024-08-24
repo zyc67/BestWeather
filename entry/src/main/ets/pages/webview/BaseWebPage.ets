@@ -6,7 +6,7 @@ import { router } from '@kit.ArkUI';
 @Component
 struct BaseWebPage {
   private topRectHeight = px2vp(AppStorage.get<number>(TOP_NAVI_HEIGHT) || 0)
-  private bottomRectHeight = AppStorage.get<number>(BOTTOM_AVOID_AREA_HEIGHT) || 0
+  private bottomRectHeight = px2vp(AppStorage.get<number>(BOTTOM_AVOID_AREA_HEIGHT) || 0)
   private webController: webview.WebviewController = new webview.WebviewController()
 
   titleString: string = ''

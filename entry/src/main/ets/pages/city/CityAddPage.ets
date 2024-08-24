@@ -9,7 +9,7 @@ import { City } from '../../models/WeatherModel';
 struct CityAddPage {
   @State hotCityModel: HotCityModel = {}
   private topRectHeight = px2vp(AppStorage.get<number>(TOP_NAVI_HEIGHT) || 0)
-  private bottomRectHeight = AppStorage.get<number>(BOTTOM_AVOID_AREA_HEIGHT) || 0
+  private bottomRectHeight = px2vp(AppStorage.get<number>(BOTTOM_AVOID_AREA_HEIGHT) || 0)
 
   async aboutToAppear() {
     const res = await HttpUtils.hotCity<HotCityResp>()
@@ -43,12 +43,15 @@ struct CityAddPage {
         RecommendView({hotCityModel: this.hotCityModel, action: (city: City) => {
           this.addCity(city)
         }})
+          .layoutWeight(1)
       }
       .margin({
-        top: 60 + this.topRectHeight,
-        bottom: this.bottomRectHeight
+        top: 60 + this.topRectHeight
       })
     }
+    .padding({
+      bottom: this.bottomRectHeight
+    })
     .height('100%')
     .width('100%')
   }
