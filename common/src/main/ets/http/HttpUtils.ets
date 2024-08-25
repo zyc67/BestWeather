@@ -1,8 +1,13 @@
 import { HttpManager } from './HttpManager'
 import { EnvType, environment, baseUrl, baseUrlTest, baseWeatherPath, cityManagerWeatherPath, baseSearchCityUrl, searchCityPath,
   baseHotCityUrl,
-  hotCityPath} from './HttpConstant'
+  hotCityPath,
+  baseUrl_SH,
+  themeListPath} from './HttpConstant'
 import { isEmpty } from '../utils'
+import { CommonResp } from '../../../../../entry/src/main/ets/models/ThemeListModel'
+import { util } from '@kit.ArkTS'
+import pako from 'pako'
 
 export class HttpUtils {
   /**
@@ -90,5 +95,15 @@ export class HttpUtils {
     let params: Record<string, Object> = {}
     params['procCode'] = '3501'
     return HttpManager.postUrl<T>(baseHotCityUrl + hotCityPath, params, 1, 1)
+  }
+
+  static async getThemeList(): Promise<CommonResp> {
+    const result = await HttpManager.getUrl<CommonResp>(baseUrl_SH, themeListPath, {}, 2, 0)
+    const base64Helper = new util.Base64Helper()
+    const decodeData = base64Helper.decodeSync(result.data)
+    const jsonStr = pako.inflate(decodeData, { to: 'string' }) as string
+    console.log('接口返回' + jsonStr)
+    result.data = jsonStr
+    return result
   }
 }

@@ -2,7 +2,7 @@ import { City } from '../models/WeatherModel'
 
 @Component
 export struct HotScenicItemView {
-  @Prop hotScenic?: City[]
+  @Prop hotScenic: City[]
   action: (city: City) => void = () => {}
 
   @Builder scenicItemLarge(item: City) {

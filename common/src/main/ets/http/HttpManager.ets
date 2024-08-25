@@ -28,9 +28,9 @@ export class HttpManager {
     if (respType == 0) { // 直接处理
       return JSON.parse(util.TextDecoder.create('utf-8').decodeWithStream(new Uint8Array(res.data as ArrayBuffer))) as T
     } else if (respType == 1) { // gzip
-      let jsonStr = pako.inflate(res.data, { to: 'string' }) as string
-      console.log('接口返回'+jsonStr)
-      return JSON.parse(pako.inflate(res.data, { to: 'string' }) as string) as T
+      const jsonStr = pako.inflate(res.data, { to: 'string' }) as string
+      console.log('接口返回' + jsonStr)
+      return JSON.parse(jsonStr) as T
     } else {
       return Promise.resolve(res.data)
     }

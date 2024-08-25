@@ -5,8 +5,8 @@ import { HotScenicItemView } from './HotScenicItemView'
 
 @Component
 export struct HotScenicView {
-  @Prop hotScenic?: City[]
-  @Prop hotGolf?: City[]
+  @Prop hotScenic: City[]
+  @Prop hotGolf: City[]
   action: (city: City) => void = () => {}
   build() {
     Column() {

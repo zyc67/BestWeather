@@ -2,7 +2,7 @@ import { City } from '../models/WeatherModel'
 
 @Component
 export struct HotGolfItemView {
-  @Prop hotGolf?: City[]
+  @Prop hotGolf: City[]
   action: (city: City) => void = () => {}
 
   build() {

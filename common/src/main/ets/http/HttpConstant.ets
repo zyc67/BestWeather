@@ -11,6 +11,7 @@ export const channelId: string = '20001'
 // 西安气象新接口
 // 正式环境
 export const baseUrl: string = 'https://open.zuimeitianqi.com/'
+export const baseUrl_SH: string = 'https://bs.zuimeitianqi.com/'
 // 测试环境
 export const baseUrlTest: string = 'https://uat.zuimeitianqi.com/'
 
@@ -40,4 +41,6 @@ export const searchCityPath: string = 'zmAppDataServer/city/aoi'
 export const calendarPath: string = 'calendar/daily'
 // 热门城市列表
 export const hotCityPath: string = 'zmHotServer/3.0/'
+// 主题列表
+export const themeListPath: string = 'theme/list/gzip/'
 
