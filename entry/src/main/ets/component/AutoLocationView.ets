@@ -2,6 +2,7 @@
 @Component
 export struct AutoLocationView {
   currentLocation: string = '当前位置  --'
+  autoLocationAction: () => void = () => {}
   build() {
     Column() {
       Image($r('app.media.icon_add_city_location'))
@@ -28,6 +29,9 @@ export struct AutoLocationView {
         .height(40)
         .margin({
           top: 6
+        })
+        .onClick(() => {
+          this.autoLocationAction()
         })
       Text('自动定位后，可以获取高精度天气预报')
         .fontSize(14)

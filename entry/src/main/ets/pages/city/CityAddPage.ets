@@ -1,8 +1,11 @@
-import { BaseNaviBar, BOTTOM_AVOID_AREA_HEIGHT, HttpUtils, TOP_NAVI_HEIGHT } from '@bw/common';
+import { BaseNaviBar, BOTTOM_AVOID_AREA_HEIGHT, HttpUtils, TOP_NAVI_HEIGHT, startLocation,
+  toLocationSetting, toApplicationInfo } from '@bw/common';
 import { CitySearchView } from '../../component/CitySearchView';
 import { RecommendView } from '../../component/RecommendView';
 import { HotCityModel, HotCityResp } from '../../models/HotCityModel';
 import { City } from '../../models/WeatherModel';
+import { AMapLocation } from '@amap/amap_lbs_location';
+import { common } from '@kit.AbilityKit';
 
 @Entry
 @Component
@@ -16,6 +19,22 @@ struct CityAddPage {
     if (res.data) {
       this.hotCityModel = res.data
     }
+  }
+
+  // 自动定位
+  startLocation() {
+    startLocation(getContext(this), (code: number, address: AMapLocation | undefined) => {
+      // code 0成功获取定位信息 -1没有打开手机定位 -2请求权限失败 -3获取定位异常
+      if (code === 0) {
+        console.log('11111111111111111_' + JSON.stringify(address))
+      } else if (code === -1) {
+        const context = getContext(this) as common.UIAbilityContext
+        toLocationSetting(context)
+      } else if (code === -2) {
+        const context = getContext(this) as common.UIAbilityContext
+        toApplicationInfo(context)
+      }
+    })
   }
 
   // 手动添加城市
@@ -40,7 +59,11 @@ struct CityAddPage {
             left: 16,
             right: 16
           })
-        RecommendView({hotCityModel: this.hotCityModel, action: (city: City) => {
+        RecommendView({hotCityModel: this.hotCityModel, autoLocationAction: () => {
+          // 自动定位
+          this.startLocation()
+        }, userAddCityAction: (city: City) => {
+          // 手动添加城市
           this.addCity(city)
         }})
           .layoutWeight(1)

@@ -9,7 +9,8 @@ import { HotScenicView } from './HotScenicView'
 @Component
 export struct RecommendView {
   private listScroller: ListScroller = new ListScroller()
-  action: (city: City) => void = () => {}
+  autoLocationAction: () => void = () => {}
+  userAddCityAction: (city: City) => void = () => {}
   @Prop hotCityModel: HotCityModel
   @State offsetX: number = 0
   @State currentIndex: number = 0
@@ -29,13 +30,13 @@ export struct RecommendView {
   build() {
     List() {
       ListItemGroup() {
-        AutoLocationView()
+        AutoLocationView({autoLocationAction: this.autoLocationAction})
       }
       ListItemGroup({ header: this.header()}) {
         ListItem() {
           List({ scroller: this.listScroller}) {
             ListItem() {
-              HotCityView({areaHotCity: this.hotCityModel.areaHotCity, action: this.action})
+              HotCityView({areaHotCity: this.hotCityModel.areaHotCity, action: this.userAddCityAction})
                 .padding({
                   left: 16,
                   right: 16
@@ -44,7 +45,7 @@ export struct RecommendView {
             .width('100%')
 
             ListItem() {
-              HotScenicView({hotScenic: this.hotCityModel.hotScenic, hotGolf: this.hotCityModel.hotGolf, action: this.action})
+              HotScenicView({hotScenic: this.hotCityModel.hotScenic, hotGolf: this.hotCityModel.hotGolf, action: this.userAddCityAction})
             }
             .width('100%')
           }

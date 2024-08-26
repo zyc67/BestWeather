@@ -69,14 +69,17 @@
           "when": "inuse"
         }
       },
+//      {
+//        "name": "ohos.permission.LOCATION_IN_BACKGROUND",
+//        "reason": "$string:location_desc",
+//        "usedScene": {
+//          "abilities": ["entry"],
+//          "when": "inuse"
+//        }
+//      },
       {
-        "name": "ohos.permission.LOCATION_IN_BACKGROUND",
-        "reason": "$string:location_desc",
-        "usedScene": {
-          "abilities": ["entry"],
-          "when": "inuse"
-        }
-      },
+        "name": "ohos.permission.GET_NETWORK_INFO"
+      }
 //      {
 //        "name": "ohos.permission.sec.ACCESS_UDID"
 //      },

@@ -35,7 +35,7 @@ export default class EntryAbility extends UIAbility {
     } else if (!hasPrivacy) {
       page = 'pages/splash/PrivacyPage'
     } else if (!hasSelectTheme) {
-      page = 'pages/splash/SelectThemePage'
+      page = 'pages/city/CityAddPage'
     }
     windowStage.loadContent(page, (err) => {
       if (err.code) {
