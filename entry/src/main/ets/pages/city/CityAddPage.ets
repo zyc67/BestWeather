@@ -1,9 +1,9 @@
 import { BaseNaviBar, BOTTOM_AVOID_AREA_HEIGHT, HttpUtils, TOP_NAVI_HEIGHT, startLocation,
-  toLocationSetting, toApplicationInfo } from '@bw/common';
+  toLocationSetting, toApplicationInfo, WeatherUtils } from '@bw/common';
 import { CitySearchView } from '../../component/CitySearchView';
 import { RecommendView } from '../../component/RecommendView';
 import { HotCityModel, HotCityResp } from '../../models/HotCityModel';
-import { City } from '../../models/WeatherModel';
+import { City, CityWeatherData } from '../../models/WeatherModel';
 import { AMapLocation } from '@amap/amap_lbs_location';
 import { common } from '@kit.AbilityKit';
 
@@ -22,11 +22,16 @@ struct CityAddPage {
   }
 
   // 自动定位
-  startLocation() {
+  async startLocation() {
     startLocation(getContext(this), (code: number, address: AMapLocation | undefined) => {
       // code 0成功获取定位信息 -1没有打开手机定位 -2请求权限失败 -3获取定位异常
       if (code === 0) {
-        console.log('11111111111111111_' + JSON.stringify(address))
+        if (address && address.longitude > 0 && address.latitude > 0) {
+          WeatherUtils.getLocationCityWeather(address.longitude.toString(), address.latitude.toString())
+            .then((res) => {
+              console.log(JSON.stringify(res));
+            })
+        }
       } else if (code === -1) {
         const context = getContext(this) as common.UIAbilityContext
         toLocationSetting(context)
@@ -38,8 +43,11 @@ struct CityAddPage {
   }
 
   // 手动添加城市
-  addCity(city: City) {
-
+  async addCity(city: City) {
+    if (city && city.citycode) {
+      const res = await WeatherUtils.getCityWeatherWithCityCode(city.citycode)
+      console.log(JSON.stringify(res));
+    }
   }
 
   build() {

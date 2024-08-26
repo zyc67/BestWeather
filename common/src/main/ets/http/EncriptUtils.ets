@@ -78,7 +78,6 @@ export function toBase64Encrypt(array: Uint8Array) {
   try {
     let base64Helper = new util.Base64Helper
     return base64Helper.encodeToStringSync(array)
-
   } catch (error){
     let code = (error as BusinessError).code;
     let message = (error as BusinessError).message;
@@ -91,7 +90,6 @@ export function toBase64Decrypt(content: string) {
   try {
     let base64Helper = new util.Base64Helper
     return base64Helper.decodeSync(content)
-
   } catch (error){
     let code = (error as BusinessError).code;
     let message = (error as BusinessError).message;

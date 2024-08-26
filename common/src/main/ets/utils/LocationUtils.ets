@@ -5,7 +5,7 @@ import { AMapPrivacyShowStatus, AMapPrivacyInfoStatus, AMapPrivacyAgreeStatus } 
 import abilityAccessCtrl, { Context, Permissions, PermissionRequestResult } from '@ohos.abilityAccessCtrl'
 import { geoLocationManager } from '@kit.LocationKit'
 import { isNetwork } from '.'
-import { bundleManager, common, Want } from '@kit.AbilityKit'
+import { bundleManager } from '@kit.AbilityKit'
 import { BusinessError } from '@kit.BasicServicesKit'
 
 const locationPermissions: Array<Permissions> = ['ohos.permission.LOCATION', 'ohos.permission.APPROXIMATELY_LOCATION'];
@@ -45,7 +45,7 @@ function initAmap(context: Context, onLocationListener: (code: number, address: 
  * @param onLocationListener
  *        code 0成功获取定位信息 -1没有打开手机定位 -2请求权限失败 -3获取定位异常
  */
-export function startLocation(context: Context, onLocationListener: (code: number, address: AMapLocation | undefined) => void) {
+export async function startLocation(context: Context, onLocationListener: (code: number, address: AMapLocation | undefined) => void) {
   // 是否有网络
   if (!isNetwork()) {
     return
@@ -57,7 +57,7 @@ export function startLocation(context: Context, onLocationListener: (code: numbe
     return
   }
 
-  checkPermissions(context, onLocationListener)
+  await checkPermissions(context, onLocationListener)
 }
 
 async function checkPermissions(context: Context, onLocationListener: (code: number, address: AMapLocation | undefined) => void): Promise<void> {

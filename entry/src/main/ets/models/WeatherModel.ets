@@ -10,7 +10,7 @@ export class CityWeatherData {
   additionalLiveInfos?: AdditionalLiveInfos[]
   condition?: Condition
   alert?: Alert[]
-  radar?: WeaRadar
+  radar?: Radar
   dailys?: Dailys
   aqi?: ToDayAqi
   hourlys?: Hourlys[]
@@ -20,7 +20,7 @@ export class CityWeatherData {
   hourlsMobilelink?: string
 }
 
-export class WeaRadar {
+export class Radar {
   summary?: string
   dataseries?: Array<number> // 2小时逐分钟降水
   dataTime?: number // 雷达发布时间
@@ -227,6 +227,7 @@ export class City {
   administrativearea?: Administrativearea[]
   ca?: string
   bgImg?: string
+  addTime?: number = 0
 }
 
 export class Administrativearea{
