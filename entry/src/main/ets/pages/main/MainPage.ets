@@ -1,5 +1,4 @@
-import { getTabbarSelectedIcons, getTabbarNormalIcons, getTabbarItemSelectedColor, getTabbarItemNormalColor } from '@bw/common/src/main/ets/utils'
-import { BOTTOM_AVOID_AREA_HEIGHT } from '@bw/common/src/main/ets/constant/Constant'
+import { getTabbarSelectedIcons, getTabbarNormalIcons, getTabbarItemSelectedColor, getTabbarItemNormalColor, BOTTOM_AVOID_AREA_HEIGHT } from '@bw/common'
 import { HomePage } from '../home/HomePage'
 import { NinetyDayPage } from '../ninetyDay/NinetyDayPage'
 import { FindPage } from '../find/FindPage'

@@ -1,9 +1,6 @@
-import { HttpUtils } from '@bw/common/src/main/ets/http/HttpUtils'
+import { HttpUtils, RouterUtils, PFUtils, CURRENT_THEME_ID, DEFAULT_THEME_ID, TOP_NAVI_HEIGHT } from '@bw/common';
 import { CommonResp, ThemeModel } from '../../models/ThemeListModel';
 import { Banner, BannerOptions, AnimatedEnum, SwiperIndicator, BannerMargin } from '@ohos/banner'
-import { CURRENT_THEME_ID, DEFAULT_THEME_ID, TOP_NAVI_HEIGHT } from '@bw/common/src/main/ets/constant/Constant';
-import { RouterUtils } from '@bw/common/src/main/ets/utils/RouterUtils';
-import { PFUtils } from '@bw/common/src/main/ets/utils';
 
 @Entry
 @Component

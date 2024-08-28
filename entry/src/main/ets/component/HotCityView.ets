@@ -1,5 +1,5 @@
 // 热门城市
-import { getAreaName } from '@bw/common/src/main/ets/utils/CommonUtils'
+import { getAreaName } from '@bw/common'
 import { AreaHotCityModel } from '../models/HotCityModel'
 import { City } from '../models/WeatherModel'
 

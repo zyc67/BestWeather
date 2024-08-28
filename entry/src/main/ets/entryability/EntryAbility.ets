@@ -4,7 +4,7 @@ import { window } from '@kit.ArkUI';
 import { BusinessError } from '@kit.BasicServicesKit';
 import { AlertDB, AqiDB, CityDB, ConditionDB, DailysDB, DescDB, HoursDB, LifeIndexDB, PFUtils, RadarDB,
   BOTTOM_AVOID_AREA_HEIGHT, HAS_GUIDE, TOP_NAVI_HEIGHT, HAS_PRIVACY, SCREEN_WIDTH, SCREEN_HEIGHT, WeatherUtils } from '@bw/common';
-import { ThemeListDB } from '@bw/common/src/main/ets/db/ThemeListDB';
+import { ThemeListDB } from '@bw/common';
 
 export default class EntryAbility extends UIAbility {
   onCreate(want: Want, launchParam: AbilityConstant.LaunchParam): void {
