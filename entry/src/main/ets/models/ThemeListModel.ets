@@ -6,7 +6,7 @@ export class CommonResp {
   msg: string = ''
 }
 
-export class ThemeListModel implements IData {
+export class ThemeModel implements IData {
   theme_name?: string // 主题名称
   theme_id?: string   // 主题Id
   level?: number      // 标签 (1黄金 2白银 3热门 4推荐 5普通)

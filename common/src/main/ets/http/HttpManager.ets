@@ -18,7 +18,7 @@ export class HttpManager {
       url: path,
       method: 'GET',
       baseURL: baseUrl,
-      params: HttpManager.getParams(parameters, baseUrl, getType),
+      params: await HttpManager.getParams(parameters, baseUrl, getType),
       responseEncoding: 'utf-8',
       responseType: 'array_buffer',
       readTimeout: 20000

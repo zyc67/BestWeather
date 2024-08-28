@@ -23,7 +23,7 @@ export class CityDB {
     const store = await relationalStore.getRdbStore(context, STORE_CONFIG)
     if (store.version === 0) {
       // 创建数据表
-      const SQL_CREATE_TABLE = `create table if not exists ${CITY_TABLE} (cityCode text not null primary key, city text)`; // 建表Sql语句
+      const SQL_CREATE_TABLE = `create table if not exists ${CITY_TABLE} (cityCode text not null, addTime integer, city text)`; // 建表Sql语句
       await store.executeSql(SQL_CREATE_TABLE)
       store.version = 1
     }
@@ -34,7 +34,11 @@ export class CityDB {
     const store = CityDB.sharedManager().store
     if (store) {
       try {
-        const oldRowId: number = await this.deleteCity(city['cityCode'] as string)
+        if (city['addTime'] as number === 0) {
+          await this.deleteLocationCity()
+        } else {
+          await this.deleteCity(city['cityCode'] as string)
+        }
         const rowId: number = await store.insert(CITY_TABLE, city)
         return Promise.resolve(rowId)
       } catch {
@@ -44,12 +48,29 @@ export class CityDB {
     return Promise.resolve(-2)
   }
 
+  // 删除手动添加城市
   async deleteCity(cityCode: string): Promise<number> {
     const store = CityDB.sharedManager().store
     if (store) {
       try {
         let predicates = new relationalStore.RdbPredicates(CITY_TABLE);
-        predicates.equalTo('cityCode', cityCode);
+        predicates.equalTo('cityCode', cityCode).and().notEqualTo('addTime', 0);
+        const rows = await store.delete(predicates)
+        return Promise.resolve(rows)
+      } catch {
+        return Promise.resolve(-1)
+      }
+    }
+    return Promise.resolve(-2)
+  }
+
+  // 删除定位城市
+  async deleteLocationCity(): Promise<number> {
+    const store = CityDB.sharedManager().store
+    if (store) {
+      try {
+        let predicates = new relationalStore.RdbPredicates(CITY_TABLE);
+        predicates.equalTo('addTime', 0);
         const rows = await store.delete(predicates)
         return Promise.resolve(rows)
       } catch {

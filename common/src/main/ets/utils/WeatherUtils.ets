@@ -1,4 +1,6 @@
-import { AlertDB, AqiDB, CityDB, ConditionDB, DailysDB, DescDB, HoursDB, RadarDB, LifeIndexDB } from '../../../../Index'
+import { AlertDB, AqiDB, CityDB, ConditionDB, DailysDB, DescDB, HoursDB, RadarDB, LifeIndexDB,
+  isEmpty,
+  getCurrentTimestamp } from '../../../../Index'
 import { HttpUtils } from '../http/HttpUtils'
 import { WeaCommResp, CityWeatherData } from '../../../../../entry/src/main/ets/models/WeatherModel'
 
@@ -24,51 +26,64 @@ export class WeatherUtils {
   private static async parseWeather(data?: CityWeatherData, longitude?: string, latitude?: string, citycode?: string) {
     let cityCode = citycode
 
-    const city_new = data?.city_new
-    cityCode = city_new?.citycode
+    let city_new = data?.city_new
+    if (!city_new) {
+      return
+    }
+
+    if (longitude && latitude) {
+      cityCode = city_new?.citycode
+      city_new.addTime = 0
+    } else {
+      city_new.addTime = getCurrentTimestamp()
+    }
+
+    if (isEmpty(cityCode)) {
+      return
+    }
 
     if (city_new) {
-      await CityDB.sharedManager().insertCity({'cityCode': cityCode as string, 'city': JSON.stringify(city_new)})
+      await CityDB.sharedManager().insertCity({'cityCode': cityCode!, 'addTime': city_new.addTime, 'city': JSON.stringify(city_new)})
     }
 
     let condition = data?.condition
     if (condition) {
-      await ConditionDB.sharedManager().insertCondition({'cityCode': cityCode as string, 'condition': JSON.stringify(condition)})
+      await ConditionDB.sharedManager().insertCondition({'cityCode': cityCode!, 'condition': JSON.stringify(condition)})
     }
 
     let hours = data?.hourlys
     if (hours) {
-      await HoursDB.sharedManager().insertHours({'cityCode': cityCode as string, 'hours': JSON.stringify(hours)})
+      await HoursDB.sharedManager().insertHours({'cityCode': cityCode!, 'hours': JSON.stringify(hours)})
     }
 
     let aqi = data?.aqi
     if (aqi) {
-      await AqiDB.sharedManager().insertAqi({'cityCode': cityCode as string, 'aqi': JSON.stringify(aqi)})
+      await AqiDB.sharedManager().insertAqi({'cityCode': cityCode!, 'aqi': JSON.stringify(aqi)})
     }
 
     let desc = data?.desc
     if (desc) {
-      await DescDB.sharedManager().insertDesc({'cityCode': cityCode as string, 'desc': JSON.stringify(desc)})
+      await DescDB.sharedManager().insertDesc({'cityCode': cityCode!, 'desc': JSON.stringify(desc)})
     }
 
     let radar = data?.radar
     if (radar) {
-      await RadarDB.sharedManager().insertRadar({'cityCode': cityCode as string, 'radar': JSON.stringify(radar)})
+      await RadarDB.sharedManager().insertRadar({'cityCode': cityCode!, 'radar': JSON.stringify(radar)})
     }
 
     let dailys = data?.dailys
     if (dailys) {
-      await DailysDB.sharedManager().insertDailys({'cityCode': cityCode as string, 'dailys': JSON.stringify(dailys)})
+      await DailysDB.sharedManager().insertDailys({'cityCode': cityCode!, 'dailys': JSON.stringify(dailys)})
     }
 
     let alert = data?.alert
     if (alert) {
-      await AlertDB.sharedManager().insertAlert({'cityCode': cityCode as string, 'alert': JSON.stringify(alert)})
+      await AlertDB.sharedManager().insertAlert({'cityCode': cityCode!, 'alert': JSON.stringify(alert)})
     }
 
     let lifeIndex = data?.additionalLiveInfos
     if (lifeIndex) {
-      await LifeIndexDB.sharedManager().insertLifeIndex({'cityCode': cityCode as string, 'life_index': JSON.stringify(lifeIndex)})
+      await LifeIndexDB.sharedManager().insertLifeIndex({'cityCode': cityCode!, 'life_index': JSON.stringify(lifeIndex)})
     }
 
   }
@@ -139,6 +154,10 @@ export class WeatherUtils {
 
   static async deleteCity(cityCode: string) {
     await CityDB.sharedManager().deleteCity(cityCode)
+  }
+
+  static async deleteLocationCity() {
+    await CityDB.sharedManager().deleteLocationCity()
   }
 
   static async getLifeIndex(cityCode: string) {

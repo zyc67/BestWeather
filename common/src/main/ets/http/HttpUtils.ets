@@ -8,6 +8,7 @@ import { isEmpty } from '../utils'
 import { CommonResp } from '../../../../../entry/src/main/ets/models/ThemeListModel'
 import { util } from '@kit.ArkTS'
 import pako from 'pako'
+import { ThemeListDB } from '../db/ThemeListDB'
 
 export class HttpUtils {
   /**
@@ -104,6 +105,7 @@ export class HttpUtils {
     const jsonStr = pako.inflate(decodeData, { to: 'string' }) as string
     console.log('接口返回' + jsonStr)
     result.data = jsonStr
+    ThemeListDB.sharedManager().insertThemeList({ 'theme_list': jsonStr })
     return result
   }
 }

@@ -1,7 +1,9 @@
 import { HttpUtils } from '@bw/common/src/main/ets/http/HttpUtils'
-import { CommonResp, ThemeListModel } from '../../models/ThemeListModel';
+import { CommonResp, ThemeModel } from '../../models/ThemeListModel';
 import { Banner, BannerOptions, AnimatedEnum, SwiperIndicator, BannerMargin } from '@ohos/banner'
-import { TOP_NAVI_HEIGHT } from '@bw/common/src/main/ets/constant/Constant';
+import { CURRENT_THEME_ID, DEFAULT_THEME_ID, TOP_NAVI_HEIGHT } from '@bw/common/src/main/ets/constant/Constant';
+import { RouterUtils } from '@bw/common/src/main/ets/utils/RouterUtils';
+import { PFUtils } from '@bw/common/src/main/ets/utils';
 
 @Entry
 @Component
@@ -9,7 +11,7 @@ struct SelectThemePage {
   private topRectHeight = px2vp(AppStorage.get<number>(TOP_NAVI_HEIGHT) || 0)
   @State currentPos: number = 0 // 当前选中的index
   private swiperController: SwiperController = new SwiperController()
-  @State themeList: ThemeListModel[] = []
+  @State themeList: ThemeModel[] = []
   @State autoPlay?: boolean = false // 自定播放
   @State indicator?: SwiperIndicator = { bool: false } // 系统的指示器配置 不启用设置false
   @State loop?: boolean = true // 是否开启循环
@@ -51,19 +53,23 @@ struct SelectThemePage {
 
   async aboutToAppear() {
     const res = await HttpUtils.getThemeList() as CommonResp
-    const themeList = JSON.parse(res.data) as ThemeListModel[]
+    const themeList = JSON.parse(res.data) as ThemeModel[]
     this.themeList = themeList.filter((item) => item.level != 1 && item.level != 2)
   }
 
   // 跳过
   skip() {
-
+    RouterUtils.replaceUrl('pages/main/MainPage')
+    PFUtils.put(CURRENT_THEME_ID, DEFAULT_THEME_ID, getContext())
   }
 
   // 确定
   confirm() {
     const theme = this.themeList[this.currentPos]
+    PFUtils.put(CURRENT_THEME_ID, theme.theme_id || DEFAULT_THEME_ID, getContext())
+    RouterUtils.replaceUrl('pages/main/MainPage')
   }
+
   @Builder
   bannerContent(index: number) {
     Stack({ alignContent: Alignment.TopStart }) {

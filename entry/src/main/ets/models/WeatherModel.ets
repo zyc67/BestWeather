@@ -227,6 +227,7 @@ export class City {
   administrativearea?: Administrativearea[]
   ca?: string
   bgImg?: string
+  // 手动添加字段
   addTime?: number = 0
 }
 

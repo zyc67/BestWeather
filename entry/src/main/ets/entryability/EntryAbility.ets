@@ -2,11 +2,9 @@ import { AbilityConstant, bundleManager, UIAbility, Want } from '@kit.AbilityKit
 import { hilog } from '@kit.PerformanceAnalysisKit';
 import { window } from '@kit.ArkUI';
 import { BusinessError } from '@kit.BasicServicesKit';
-import { BOTTOM_AVOID_AREA_HEIGHT, HAS_GUIDE, TOP_NAVI_HEIGHT, HAS_PRIVACY,
-  HAS_SELECT_THEME,
-  SCREEN_WIDTH,
-  SCREEN_HEIGHT} from '@bw/common/src/main/ets/constant/Constant';
-import { PFUtils } from '@bw/common';
+import { AlertDB, AqiDB, CityDB, ConditionDB, DailysDB, DescDB, HoursDB, LifeIndexDB, PFUtils, RadarDB,
+  BOTTOM_AVOID_AREA_HEIGHT, HAS_GUIDE, TOP_NAVI_HEIGHT, HAS_PRIVACY, SCREEN_WIDTH, SCREEN_HEIGHT, WeatherUtils } from '@bw/common';
+import { ThemeListDB } from '@bw/common/src/main/ets/db/ThemeListDB';
 
 export default class EntryAbility extends UIAbility {
   onCreate(want: Want, launchParam: AbilityConstant.LaunchParam): void {
@@ -24,17 +22,17 @@ export default class EntryAbility extends UIAbility {
 
   async onWindowStageCreate(windowStage: window.WindowStage) {
     // Main window is created, set main page for this ability
-    hilog.info(0x0000, 'testTag', '%{public}s', 'Ability onWindowStageCreate');
+
+    await this.setupDB()
 
     const hasGuide = await PFUtils.get(HAS_GUIDE, false, this.context)
     const hasPrivacy = await PFUtils.get(HAS_PRIVACY, false, this.context)
-    const hasSelectTheme = await PFUtils.get(HAS_SELECT_THEME, false, this.context)
     let page = 'pages/main/MainPage'
     if (!hasGuide) {
       page = 'pages/splash/GuidePage'
     } else if (!hasPrivacy) {
       page = 'pages/splash/PrivacyPage'
-    } else if (!hasSelectTheme) {
+    } else if ((await WeatherUtils.getAllCitys()).length === 0) {
       page = 'pages/city/CityAddPage'
     }
     windowStage.loadContent(page, (err) => {
@@ -77,6 +75,20 @@ export default class EntryAbility extends UIAbility {
       })
       hilog.info(0x0000, 'testTag', 'Succeeded in loading the content.');
     });
+  }
+
+  async setupDB() {
+    const context: Context = this.context
+    await ConditionDB.sharedManager().createTable(context)
+    await CityDB.sharedManager().createTable(context)
+    await AlertDB.sharedManager().createTable(context)
+    await AqiDB.sharedManager().createTable(context)
+    await DailysDB.sharedManager().createTable(context)
+    await DescDB.sharedManager().createTable(context)
+    await HoursDB.sharedManager().createTable(context)
+    await LifeIndexDB.sharedManager().createTable(context)
+    await RadarDB.sharedManager().createTable(context)
+    await ThemeListDB.sharedManager().createTable(context)
   }
 
   onWindowStageDestroy(): void {

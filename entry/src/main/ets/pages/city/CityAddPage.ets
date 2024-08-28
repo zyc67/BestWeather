@@ -1,5 +1,6 @@
 import { BaseNaviBar, BOTTOM_AVOID_AREA_HEIGHT, HttpUtils, TOP_NAVI_HEIGHT, startLocation,
-  toLocationSetting, toApplicationInfo, WeatherUtils } from '@bw/common';
+  toLocationSetting, toApplicationInfo, WeatherUtils,
+  RouterUtils } from '@bw/common';
 import { CitySearchView } from '../../component/CitySearchView';
 import { RecommendView } from '../../component/RecommendView';
 import { HotCityModel, HotCityResp } from '../../models/HotCityModel';
@@ -29,7 +30,7 @@ struct CityAddPage {
         if (address && address.longitude > 0 && address.latitude > 0) {
           WeatherUtils.getLocationCityWeather(address.longitude.toString(), address.latitude.toString())
             .then((res) => {
-              console.log(JSON.stringify(res));
+              this.addCitySuccess()
             })
         }
       } else if (code === -1) {
@@ -46,8 +47,12 @@ struct CityAddPage {
   async addCity(city: City) {
     if (city && city.citycode) {
       const res = await WeatherUtils.getCityWeatherWithCityCode(city.citycode)
-      console.log(JSON.stringify(res));
+      this.addCitySuccess()
     }
+  }
+
+  addCitySuccess() {
+    RouterUtils.replaceUrl('pages/splash/SelectThemePage')
   }
 
   build() {

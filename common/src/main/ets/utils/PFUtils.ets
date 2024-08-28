@@ -53,15 +53,15 @@ export class PFUtils {
   /**
    * 将数据写入缓存的Preferences实例中，可通过flush将Preferences实例持久化
    * @param key
-   * @param defValue
+   * @param value
    */
-  static async put(key: string, defValue: preferences.ValueType, context: Context) {
+  static async put(key: string, value: preferences.ValueType, context: Context) {
     if (!PFUtils.dataPreferences) {
       await PFUtils.getPreferences(context)
     }
 
     try {
-      await PFUtils.dataPreferences?.put(key, defValue)
+      await PFUtils.dataPreferences?.put(key, value)
       await PFUtils.dataPreferences?.flush()
     } catch (e) {
       console.log((e as BusinessError).message)

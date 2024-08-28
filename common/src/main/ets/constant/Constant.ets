@@ -7,3 +7,11 @@ export const HAS_SELECT_THEME = 'has_select_theme'
 export const SCREEN_WIDTH = 'screen_width'
 export const SCREEN_HEIGHT = 'screen_height'
 export const UUID_STRING = 'uuid_string'
+export const CURRENT_THEME_ID = 'current_theme_id'
+
+
+
+
+
+
+export const DEFAULT_THEME_ID = '124'
