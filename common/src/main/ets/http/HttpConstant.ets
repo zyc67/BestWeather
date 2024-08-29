@@ -43,4 +43,6 @@ export const calendarPath: string = 'calendar/daily'
 export const hotCityPath: string = 'zmHotServer/3.0/'
 // 主题列表
 export const themeListPath: string = 'theme/list/gzip/'
+// 主题图片
+export const themeBgImagePath: string = 'theme/bg'
 

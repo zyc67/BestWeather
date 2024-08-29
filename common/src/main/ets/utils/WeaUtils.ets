@@ -42,3 +42,9 @@ export function getCurrentDayType(sunRise: number, sunSet: number) {
   }
   return result
 }
+
+// 是否是白天
+export function isDayTime(sunRise: number, sunSet: number) {
+  const dayType = getCurrentDayType(sunRise, sunSet)
+  return dayType === 1 ? '1' : '0'
+}

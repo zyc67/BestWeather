@@ -23,11 +23,6 @@ import { common } from '@kit.AbilityKit'
   .fontColor(fontColor)
 }
 
-class Obj {
-  title: string = ''
-  url: string = ''
-}
-
 @Entry
 @Component
 struct PrivacyPage {
@@ -86,7 +81,7 @@ struct PrivacyPage {
 
   agree() {
     PFUtils.put(HAS_PRIVACY, true, getContext())
-    RouterUtils.replaceUrl('pages/city/CityAddPage')
+    RouterUtils.replaceUrl('pages/city/CityAddPage', { firstLaunch: true })
   }
 
   disAgree() {
@@ -115,22 +110,20 @@ struct PrivacyPage {
                 Span($r('app.string.privacy_label'))
                   .highLightStyle()
                   .onClick(() => {
-                    const params: Obj = {
+                    RouterUtils.pushUrl('pages/webview/BaseWebPage', {
                       title: '隐私政策',
                       url: PRIVACY_URL
-                    }
-                    RouterUtils.pushUrl('pages/webview/BaseWebPage', params)
+                    })
                   })
                 Span('和')
                   .normalStyle()
                 Span($r('app.string.protocol_label'))
                   .highLightStyle()
                   .onClick(() => {
-                    const params: Obj = {
+                    RouterUtils.pushUrl('pages/webview/BaseWebPage', {
                       title: '用户协议',
                       url: PROTOCOL_URL
-                    }
-                    RouterUtils.pushUrl('pages/webview/BaseWebPage', params)
+                    })
                   })
                 Span($r('app.string.privacy_desc_2'))
                   .normalStyle()

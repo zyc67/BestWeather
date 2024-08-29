@@ -37,12 +37,11 @@ export class HttpManager {
   }
 
   static async postUrl<T>(url: string, parameters: Record<string, Object>, getType: number, respType: number): Promise<T> {
-    let requestJson: Record<string, Object> = await HttpManager.getParams(parameters, baseUrl, getType)
-    let requestData: string = toBase64Encrypt(toXor(JSON.stringify(requestJson)))
+    let requestJson: Record<string, Object> = await HttpManager.getParams(parameters, '', getType)
+    let requestData: string = getType === 1 ? toBase64Encrypt(toXor(JSON.stringify(requestJson))) : JSON.stringify(requestJson)
     const res: AxiosResponse<T> = await axios<T, AxiosResponse<T>>({
       url: url,
       method: 'POST',
-      baseURL: baseUrl,
       responseEncoding: 'utf-8',
       responseType: 'array_buffer',
       readTimeout: 20000,

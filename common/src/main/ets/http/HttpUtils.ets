@@ -3,12 +3,16 @@ import { EnvType, environment, baseUrl, baseUrlTest, baseWeatherPath, cityManage
   baseHotCityUrl,
   hotCityPath,
   baseUrl_SH,
-  themeListPath} from './HttpConstant'
+  themeListPath,
+  themeBgImagePath} from './HttpConstant'
 import { isEmpty } from '../utils'
+import { THEME_BG_UPDATE } from '../constant'
 import { CommonResp } from '../../../../../entry/src/main/ets/models/ThemeListModel'
 import { util } from '@kit.ArkTS'
 import pako from 'pako'
 import { ThemeListDB } from '../db/ThemeListDB'
+import { SCREEN_HEIGHT, SCREEN_WIDTH } from '../constant'
+import { emitter } from '@kit.BasicServicesKit'
 
 export class HttpUtils {
   /**
@@ -106,6 +110,33 @@ export class HttpUtils {
     console.log('接口返回' + jsonStr)
     result.data = jsonStr
     ThemeListDB.sharedManager().insertThemeList({ 'theme_list': jsonStr })
+    return result
+  }
+
+  static async getThemeBgImage(themeId: string, cityCode: string, weaId: string, isDay: string, themeType: number): Promise<CommonResp> {
+    let params: Record<string, Object> = {
+      'theme_id': themeId,
+      'width': Number(AppStorage.get<string>(SCREEN_WIDTH)) || 0,
+      'height': Number(AppStorage.get<string>(SCREEN_HEIGHT)) || 0,
+    }
+    if (themeType === 1) {
+      params['weather_code'] = weaId
+      params['is_day'] = isDay
+    } else {
+      params['city_code'] = cityCode
+    }
+    const result = await HttpManager.postUrl<CommonResp>(baseUrl_SH + themeBgImagePath, params, 2, 0)
+    const event: emitter.InnerEvent = {
+      eventId: THEME_BG_UPDATE,
+      priority: emitter.EventPriority.LOW
+    }
+    const eventData: emitter.EventData = {
+      data: {
+        cityCode,
+        url: result.data
+      }
+    }
+    emitter.emit(event, eventData)
     return result
   }
 }

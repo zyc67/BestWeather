@@ -63,7 +63,7 @@ export class HoursDB {
     const store = HoursDB.sharedManager().store
     const predicates = new relationalStore.RdbPredicates(HOURS_TABLE);
     predicates.equalTo('cityCode', cityCode);
-    let result: Hourlys = {}
+    let result: Hourlys[] = []
     if (store) {
       const resultSet = await store.query(predicates, ['hours'])
       while (resultSet.goToNextRow()) {

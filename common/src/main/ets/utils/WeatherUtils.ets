@@ -1,8 +1,11 @@
 import { AlertDB, AqiDB, CityDB, ConditionDB, DailysDB, DescDB, HoursDB, RadarDB, LifeIndexDB,
   isEmpty,
-  getCurrentTimestamp } from '../../../../Index'
+  getCurrentTimestamp, getCurrentTheme,
+  getWeaThemeType, isDayTime } from '../../../../Index'
 import { HttpUtils } from '../http/HttpUtils'
 import { WeaCommResp, CityWeatherData } from '../../../../../entry/src/main/ets/models/WeatherModel'
+import dayjs from 'dayjs'
+import isToday from 'dayjs/plugin/isToday'
 
 export class WeatherUtils {
   static async getLocationCityWeather(longitude: string, latitude: string): Promise<CityWeatherData | undefined> {
@@ -16,6 +19,10 @@ export class WeatherUtils {
 
   static async getCityWeatherWithCityCode(cityCode: string): Promise<CityWeatherData | undefined> {
     const data = await HttpUtils.getCityWeatherWithCityCode<WeaCommResp>(cityCode)
+    const theme = await getCurrentTheme()
+    if (theme.carousel !== 1) { // 非天气数据背景可以直接请求，不用等到天气数据结果出来再去请求背景
+      HttpUtils.getThemeBgImage(theme.theme_id || '', cityCode, '', '', theme.carousel || 3)
+    }
     if (data.resultcode === '0') {
       await WeatherUtils.parseWeather(data.data, undefined, undefined, cityCode)
       return data.data
@@ -31,61 +38,73 @@ export class WeatherUtils {
       return
     }
 
+    const theme = await getCurrentTheme()
+    const weaId = getWeaThemeType(data?.condition?.cnwid?.toString() || '').toString()
+
+    const todayWeatherArray = data?.dailys?.dailyweathers?.filter(item => {
+      dayjs.extend(isToday)
+      return dayjs(item.current).isToday()
+    })
+
+    let isDay = '0'
+    if (weaId === '1') { // 非晴天1 isDay都传0
+      if (todayWeatherArray?.length || 0 > 0) {
+        const todayWeatherData = todayWeatherArray![0]
+        isDay = isDayTime(todayWeatherData.sr || 0, todayWeatherData.ss || 0)
+      }
+    }
+
     if (longitude && latitude) {
       cityCode = city_new?.citycode
       city_new.addTime = 0
+      if (isEmpty(cityCode)) {
+        return
+      }
+
+      if (theme.carousel === 1) {
+        HttpUtils.getThemeBgImage(theme.theme_id || '', cityCode!, weaId, isDay, theme.carousel || 3)
+      } else {
+        HttpUtils.getThemeBgImage(theme.theme_id || '', cityCode!, '', '', theme.carousel || 3)
+      }
     } else {
       city_new.addTime = getCurrentTimestamp()
+
+      if (theme.carousel === 1) {
+        HttpUtils.getThemeBgImage(theme.theme_id || '', cityCode!, weaId, isDay, theme.carousel || 3)
+      }
     }
 
-    if (isEmpty(cityCode)) {
-      return
-    }
+
 
     if (city_new) {
       await CityDB.sharedManager().insertCity({'cityCode': cityCode!, 'addTime': city_new.addTime, 'city': JSON.stringify(city_new)})
     }
 
-    let condition = data?.condition
-    if (condition) {
-      await ConditionDB.sharedManager().insertCondition({'cityCode': cityCode!, 'condition': JSON.stringify(condition)})
-    }
+    const condition = data?.condition || {}
+    const conditionPromise = ConditionDB.sharedManager().insertCondition({'cityCode': cityCode!, 'condition': JSON.stringify(condition)})
 
-    let hours = data?.hourlys
-    if (hours) {
-      await HoursDB.sharedManager().insertHours({'cityCode': cityCode!, 'hours': JSON.stringify(hours)})
-    }
+    const hours = data?.hourlys || []
+    const hoursPromise = HoursDB.sharedManager().insertHours({'cityCode': cityCode!, 'hours': JSON.stringify(hours)})
 
-    let aqi = data?.aqi
-    if (aqi) {
-      await AqiDB.sharedManager().insertAqi({'cityCode': cityCode!, 'aqi': JSON.stringify(aqi)})
-    }
+    const aqi = data?.aqi || {}
+    const aqiPromise = AqiDB.sharedManager().insertAqi({'cityCode': cityCode!, 'aqi': JSON.stringify(aqi)})
 
-    let desc = data?.desc
-    if (desc) {
-      await DescDB.sharedManager().insertDesc({'cityCode': cityCode!, 'desc': JSON.stringify(desc)})
-    }
+    const desc = data?.desc || {}
+    const descPromise = DescDB.sharedManager().insertDesc({'cityCode': cityCode!, 'desc': JSON.stringify(desc)})
 
-    let radar = data?.radar
-    if (radar) {
-      await RadarDB.sharedManager().insertRadar({'cityCode': cityCode!, 'radar': JSON.stringify(radar)})
-    }
+    const radar = data?.radar || {}
+    const radarPromise = RadarDB.sharedManager().insertRadar({'cityCode': cityCode!, 'radar': JSON.stringify(radar)})
 
-    let dailys = data?.dailys
-    if (dailys) {
-      await DailysDB.sharedManager().insertDailys({'cityCode': cityCode!, 'dailys': JSON.stringify(dailys)})
-    }
+    const dailys = data?.dailys || {}
+    const dailysPromise = DailysDB.sharedManager().insertDailys({'cityCode': cityCode!, 'dailys': JSON.stringify(dailys)})
 
-    let alert = data?.alert
-    if (alert) {
-      await AlertDB.sharedManager().insertAlert({'cityCode': cityCode!, 'alert': JSON.stringify(alert)})
-    }
+    const alert = data?.alert || []
+    const alertPromise = AlertDB.sharedManager().insertAlert({'cityCode': cityCode!, 'alert': JSON.stringify(alert)})
 
-    let lifeIndex = data?.additionalLiveInfos
-    if (lifeIndex) {
-      await LifeIndexDB.sharedManager().insertLifeIndex({'cityCode': cityCode!, 'life_index': JSON.stringify(lifeIndex)})
-    }
+    const lifeIndex = data?.additionalLiveInfos || []
+    const lifeIndexPromise = LifeIndexDB.sharedManager().insertLifeIndex({'cityCode': cityCode!, 'life_index': JSON.stringify(lifeIndex)})
 
+    await Promise.all([conditionPromise, hoursPromise, aqiPromise, descPromise, radarPromise, dailysPromise, alertPromise, lifeIndexPromise])
   }
 
   static async getCondition(cityCode: string) {

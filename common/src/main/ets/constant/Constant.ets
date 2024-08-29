@@ -15,3 +15,5 @@ export const CURRENT_THEME_ID = 'current_theme_id'
 
 
 export const DEFAULT_THEME_ID = '124'
+export const HOME_PAGE_SHOW_EVENT_ID = 1
+export const THEME_BG_UPDATE = 2

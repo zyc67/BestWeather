@@ -1,4 +1,4 @@
-@Entry
+
 @Component
 export struct FindPage {
   aboutToAppear(): void {

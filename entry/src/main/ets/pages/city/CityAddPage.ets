@@ -1,6 +1,6 @@
 import { BaseNaviBar, BOTTOM_AVOID_AREA_HEIGHT, HttpUtils, TOP_NAVI_HEIGHT, startLocation,
   toLocationSetting, toApplicationInfo, WeatherUtils,
-  RouterUtils } from '@bw/common';
+  RouterUtils, Params } from '@bw/common';
 import { CitySearchView } from '../../component/CitySearchView';
 import { RecommendView } from '../../component/RecommendView';
 import { HotCityModel, HotCityResp } from '../../models/HotCityModel';
@@ -11,6 +11,7 @@ import { common } from '@kit.AbilityKit';
 @Entry
 @Component
 struct CityAddPage {
+  firstLaunch: boolean = false
   @State hotCityModel: HotCityModel = {}
   private topRectHeight = px2vp(AppStorage.get<number>(TOP_NAVI_HEIGHT) || 0)
   private bottomRectHeight = px2vp(AppStorage.get<number>(BOTTOM_AVOID_AREA_HEIGHT) || 0)
@@ -52,7 +53,12 @@ struct CityAddPage {
   }
 
   addCitySuccess() {
-    RouterUtils.replaceUrl('pages/splash/SelectThemePage')
+    const params: Params = RouterUtils.getParams()
+    if (params.firstLaunch) {
+      RouterUtils.replaceUrl('pages/splash/SelectThemePage')
+    } else {
+      RouterUtils.back('pages/main/MainPage')
+    }
   }
 
   build() {
@@ -64,7 +70,7 @@ struct CityAddPage {
           direction: GradientDirection.Bottom,
           colors: [['#1F90FF', 0.0], ['#FFFFFF', 1.0]]
         })
-      BaseNaviBar({title: '添加城市', canBack: false})
+      BaseNaviBar({title: '添加城市', canBack: !RouterUtils.getParams().firstLaunch})
 
       Column() {
         CitySearchView()

@@ -1,8 +1,9 @@
-import { WeatherUtils } from '@bw/common'
+import { WeatherUtils, RouterUtils, HOME_PAGE_SHOW_EVENT_ID, HttpUtils } from '@bw/common'
 import { City } from '../../models/WeatherModel'
 import { HomeTitleView } from '../../component/home/HomeTitleView'
+import { WeaView } from '../../component/home/WeaView'
+import { emitter } from '@kit.BasicServicesKit'
 
-@Entry
 @Component
 export struct HomePage {
 
@@ -12,21 +13,21 @@ export struct HomePage {
   @State refreshTitle: string = '数据更新中...'
 
   aboutToAppear(): void {
+    const event: emitter.InnerEvent = {
+      eventId: HOME_PAGE_SHOW_EVENT_ID
+    };
+    emitter.on(event, () => {
+      this.getAllCities()
+    })
+
     this.getAllCities()
-    setInterval(() => {
-      this.refreshing = !this.refreshing
-    }, 3000)
+    // setInterval(() => {
+    //   this.refreshing = !this.refreshing
+    // }, 3000)
   }
 
   async getAllCities() {
-    // this.allCities = await WeatherUtils.getAllCitys()
-    const array = await WeatherUtils.getAllCitys()
-    if (array.length > 0) {
-      this.allCities.push(array[0])
-      this.allCities.push(array[0])
-      this.allCities.push(array[0])
-      this.allCities.push(array[0])
-    }
+    this.allCities = await WeatherUtils.getAllCitys()
   }
 
   build() {
@@ -34,7 +35,7 @@ export struct HomePage {
       Tabs({barPosition: BarPosition.Start}) {
         ForEach(this.allCities, (city: City) => {
           TabContent() {
-            Text(city.localizedname)
+            WeaView({city})
           }
         })
       }
@@ -52,7 +53,14 @@ export struct HomePage {
           weaIcon: '',
           temperature: '29°',
           refreshing: this.refreshing,
-          refreshTitle: this.refreshTitle
+          refreshTitle: this.refreshTitle,
+          isLocation: this.allCities[this.currentIndex].addTime === 0,
+          toCityManagerPageAction: () => {
+            RouterUtils.pushUrl('pages/city/CityAddPage', { firstLaunch: false })
+          },
+          showCategoryViewAction: () => {
+
+          }
         })
       }
     }

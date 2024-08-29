@@ -63,7 +63,7 @@ export class AlertDB {
     const store = AlertDB.sharedManager().store
     const predicates = new relationalStore.RdbPredicates(ALERT_TABLE);
     predicates.equalTo('cityCode', cityCode);
-    let result: Alert = {}
+    let result: Alert[] = []
     if (store) {
       const resultSet = await store.query(predicates, ['alert'])
       while (resultSet.goToNextRow()) {

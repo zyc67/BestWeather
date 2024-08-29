@@ -7,15 +7,26 @@ import { curves } from '@kit.ArkUI'
 export struct HomeTitleView {
   private topRectHeight = px2vp(AppStorage.get<number>(TOP_NAVI_HEIGHT) || 0)
   @Prop cityName: string
-  @Prop cityCount: number = 0
+  @Prop @Watch('cityCountChange') cityCount: number = 0
   @Prop @Watch('switchCities') currentIndex: number = 0
   @Prop up: boolean = false
   @Prop weaIcon: Resource | string
   @Prop temperature: string
   @Prop @Watch('refreshWeatherData') refreshing: boolean
   @Prop refreshTitle: string
+  @Prop isLocation: boolean
+  toCityManagerPageAction: () => void = () => {}
+  showCategoryViewAction: () => void = () => {}
   @State indicatorConfig: IndicatorConfig = new IndicatorConfig(this.cityCount, this.currentIndex, '#FFFFFF', '#FFFFFF80')
   @State translateY: number = 0
+
+  cityCountChange() {
+    const indicatorConfig: IndicatorConfig = new IndicatorConfig(this.cityCount, this.currentIndex, '#FFFFFF', '#FFFFFF80')
+    indicatorConfig.normalWidth = 3
+    indicatorConfig.selectedWidth = 4
+    indicatorConfig.indicatorSpace = 2
+    this.indicatorConfig = indicatorConfig
+  }
 
   switchCities() {
     this.indicatorConfig.currentPosition = this.currentIndex
@@ -28,11 +39,15 @@ export struct HomeTitleView {
   }
 
   aboutToAppear(): void {
-    const indicatorConfig: IndicatorConfig = new IndicatorConfig(this.cityCount, this.currentIndex, '#FFFFFF', '#FFFFFF80')
-    indicatorConfig.normalWidth = 3
-    indicatorConfig.selectedWidth = 4
-    indicatorConfig.indicatorSpace = 2
-    this.indicatorConfig = indicatorConfig
+    this.cityCountChange()
+  }
+
+  toCityManagerPage() {
+    this.toCityManagerPageAction()
+  }
+
+  showCategoryView() {
+    this.showCategoryViewAction()
   }
 
   @Builder locationBuilder() {
@@ -41,11 +56,13 @@ export struct HomeTitleView {
         .fontColor('#FFFFFF')
         .fontSize(18)
         .fontWeight(FontWeight.Medium)
-      ImageSpan($r('app.media.icon_location'))
-        .width(24)
-        .height(24)
-        .objectFit(ImageFit.Contain)
-        .verticalAlign(ImageSpanAlignment.CENTER)
+      if (this.isLocation) {
+        ImageSpan($r('app.media.icon_location'))
+          .width(24)
+          .height(24)
+          .objectFit(ImageFit.Contain)
+          .verticalAlign(ImageSpanAlignment.CENTER)
+      }
     }
     .textOverflow({
       overflow: TextOverflow.MARQUEE
@@ -71,6 +88,9 @@ export struct HomeTitleView {
           Image($r('app.media.icon_add'))
             .width(28)
             .height(28)
+            .onClick(() => {
+              this.toCityManagerPage()
+            })
 
           Column() {
             this.locationBuilder()
@@ -82,6 +102,9 @@ export struct HomeTitleView {
           }
           .alignItems(HorizontalAlign.Start)
           .layoutWeight(1)
+          .onClick(() => {
+            this.toCityManagerPage()
+          })
 
           this.categoryBuilder()
         }
@@ -94,6 +117,9 @@ export struct HomeTitleView {
             .alignItems(HorizontalAlign.Start)
             .constraintSize({
               maxWidth: '60%'
+            })
+            .onClick(() => {
+              this.toCityManagerPage()
             })
             Image(this.weaIcon)
               .width(28)
@@ -122,6 +148,5 @@ export struct HomeTitleView {
     })
     .justifyContent(FlexAlign.Center)
     .alignItems(HorizontalAlign.Start)
-    .backgroundColor(Color.Red)
   }
 }
