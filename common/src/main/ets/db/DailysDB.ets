@@ -63,7 +63,7 @@ export class DailysDB {
     const store = DailysDB.sharedManager().store
     const predicates = new relationalStore.RdbPredicates(DAILYS_TABLE);
     predicates.equalTo('cityCode', cityCode);
-    let result: Dailys[] = []
+    let result: Dailys = {}
     if (store) {
       const resultSet = await store.query(predicates, ['dailys'])
       while (resultSet.goToNextRow()) {

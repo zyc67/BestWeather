@@ -8,29 +8,29 @@ import dayjs from 'dayjs'
 import isToday from 'dayjs/plugin/isToday'
 
 export class WeatherUtils {
-  static async getLocationCityWeather(longitude: string, latitude: string): Promise<CityWeatherData | undefined> {
+  static async getLocationCityWeather(longitude: string, latitude: string, autoRefresh: boolean): Promise<CityWeatherData | undefined> {
     const data = await HttpUtils.getLocationCityWeather<WeaCommResp>(longitude, latitude)
     if (data.resultcode === '0') {
-      await WeatherUtils.parseWeather(data.data, longitude, latitude)
+      await WeatherUtils.parseWeather(data.data, longitude, latitude, '', autoRefresh)
       return data.data
     }
     return undefined
   }
 
-  static async getCityWeatherWithCityCode(cityCode: string): Promise<CityWeatherData | undefined> {
+  static async getCityWeatherWithCityCode(cityCode: string, autoRefresh: boolean): Promise<CityWeatherData | undefined> {
     const data = await HttpUtils.getCityWeatherWithCityCode<WeaCommResp>(cityCode)
     const theme = await getCurrentTheme()
-    if (theme.carousel !== 1) { // 非天气数据背景可以直接请求，不用等到天气数据结果出来再去请求背景
+    if (!autoRefresh && theme.carousel !== 1) { // 非天气数据背景可以直接请求，不用等到天气数据结果出来再去请求背景
       HttpUtils.getThemeBgImage(theme.theme_id || '', cityCode, '', '', theme.carousel || 3)
     }
     if (data.resultcode === '0') {
-      await WeatherUtils.parseWeather(data.data, undefined, undefined, cityCode)
+      await WeatherUtils.parseWeather(data.data, undefined, undefined, cityCode, autoRefresh)
       return data.data
     }
     return undefined
   }
 
-  private static async parseWeather(data?: CityWeatherData, longitude?: string, latitude?: string, citycode?: string) {
+  private static async parseWeather(data?: CityWeatherData, longitude?: string, latitude?: string, citycode?: string, autoRefresh?: boolean) {
     let cityCode = citycode
 
     let city_new = data?.city_new
@@ -38,43 +38,47 @@ export class WeatherUtils {
       return
     }
 
-    const theme = await getCurrentTheme()
-    const weaId = getWeaThemeType(data?.condition?.cnwid?.toString() || '').toString()
+    const isLocationCity = longitude && latitude
 
-    const todayWeatherArray = data?.dailys?.dailyweathers?.filter(item => {
-      dayjs.extend(isToday)
-      return dayjs(item.current).isToday()
-    })
-
-    let isDay = '0'
-    if (weaId === '1') { // 非晴天1 isDay都传0
-      if (todayWeatherArray?.length || 0 > 0) {
-        const todayWeatherData = todayWeatherArray![0]
-        isDay = isDayTime(todayWeatherData.sr || 0, todayWeatherData.ss || 0)
-      }
-    }
-
-    if (longitude && latitude) {
+    if (isLocationCity) {
       cityCode = city_new?.citycode
       city_new.addTime = 0
       if (isEmpty(cityCode)) {
         return
       }
-
-      if (theme.carousel === 1) {
-        HttpUtils.getThemeBgImage(theme.theme_id || '', cityCode!, weaId, isDay, theme.carousel || 3)
-      } else {
-        HttpUtils.getThemeBgImage(theme.theme_id || '', cityCode!, '', '', theme.carousel || 3)
-      }
     } else {
       city_new.addTime = getCurrentTimestamp()
-
-      if (theme.carousel === 1) {
-        HttpUtils.getThemeBgImage(theme.theme_id || '', cityCode!, weaId, isDay, theme.carousel || 3)
-      }
     }
 
+    if (!autoRefresh) {
+      const theme = await getCurrentTheme()
+      const weaId = getWeaThemeType(data?.condition?.cnwid?.toString() || '').toString()
 
+      const todayWeatherArray = data?.dailys?.dailyweathers?.filter(item => {
+        dayjs.extend(isToday)
+        return dayjs(item.current).isToday()
+      })
+
+      let isDay = '0'
+      if (weaId === '1') { // 非晴天1 isDay都传0
+        if (todayWeatherArray?.length || 0 > 0) {
+          const todayWeatherData = todayWeatherArray![0]
+          isDay = isDayTime(todayWeatherData.sr || 0, todayWeatherData.ss || 0)
+        }
+      }
+
+      if (isLocationCity) {
+        if (theme.carousel === 1) {
+          HttpUtils.getThemeBgImage(theme.theme_id || '', cityCode!, weaId, isDay, theme.carousel || 3)
+        } else {
+          HttpUtils.getThemeBgImage(theme.theme_id || '', cityCode!, '', '', theme.carousel || 3)
+        }
+      } else {
+        if (theme.carousel === 1) {
+          HttpUtils.getThemeBgImage(theme.theme_id || '', cityCode!, weaId, isDay, theme.carousel || 3)
+        }
+      }
+    }
 
     if (city_new) {
       await CityDB.sharedManager().insertCity({'cityCode': cityCode!, 'addTime': city_new.addTime, 'city': JSON.stringify(city_new)})

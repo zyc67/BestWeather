@@ -2,9 +2,8 @@ import { AbilityConstant, bundleManager, UIAbility, Want } from '@kit.AbilityKit
 import { hilog } from '@kit.PerformanceAnalysisKit';
 import { window } from '@kit.ArkUI';
 import { BusinessError } from '@kit.BasicServicesKit';
-import { AlertDB, AqiDB, CityDB, ConditionDB, DailysDB, DescDB, HoursDB, LifeIndexDB, PFUtils, RadarDB,
+import { AlertDB, AqiDB, CityDB, ConditionDB, DailysDB, DescDB, HoursDB, LifeIndexDB, PFUtils, RadarDB, ThemeListDB, ThemeBgDB,
   BOTTOM_AVOID_AREA_HEIGHT, HAS_GUIDE, TOP_NAVI_HEIGHT, HAS_PRIVACY, SCREEN_WIDTH, SCREEN_HEIGHT, WeatherUtils } from '@bw/common';
-import { ThemeListDB } from '@bw/common';
 
 export default class EntryAbility extends UIAbility {
   onCreate(want: Want, launchParam: AbilityConstant.LaunchParam): void {
@@ -89,6 +88,7 @@ export default class EntryAbility extends UIAbility {
     await LifeIndexDB.sharedManager().createTable(context)
     await RadarDB.sharedManager().createTable(context)
     await ThemeListDB.sharedManager().createTable(context)
+    await ThemeBgDB.sharedManager().createTable(context)
   }
 
   onWindowStageDestroy(): void {

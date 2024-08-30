@@ -29,7 +29,7 @@ struct CityAddPage {
       // code 0成功获取定位信息 -1没有打开手机定位 -2请求权限失败 -3获取定位异常
       if (code === 0) {
         if (address && address.longitude > 0 && address.latitude > 0) {
-          WeatherUtils.getLocationCityWeather(address.longitude.toString(), address.latitude.toString())
+          WeatherUtils.getLocationCityWeather(address.longitude.toString(), address.latitude.toString(), false)
             .then((res) => {
               this.addCitySuccess()
             })
@@ -47,7 +47,7 @@ struct CityAddPage {
   // 手动添加城市
   async addCity(city: City) {
     if (city && city.citycode) {
-      const res = await WeatherUtils.getCityWeatherWithCityCode(city.citycode)
+      const res = await WeatherUtils.getCityWeatherWithCityCode(city.citycode, false)
       this.addCitySuccess()
     }
   }

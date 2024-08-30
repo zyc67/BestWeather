@@ -6,13 +6,14 @@ import { EnvType, environment, baseUrl, baseUrlTest, baseWeatherPath, cityManage
   themeListPath,
   themeBgImagePath} from './HttpConstant'
 import { isEmpty } from '../utils'
-import { THEME_BG_UPDATE } from '../constant'
+// import { THEME_BG_UPDATE } from '../constant'
 import { CommonResp } from '../../../../../entry/src/main/ets/models/ThemeListModel'
 import { util } from '@kit.ArkTS'
 import pako from 'pako'
 import { ThemeListDB } from '../db/ThemeListDB'
 import { SCREEN_HEIGHT, SCREEN_WIDTH } from '../constant'
 import { emitter } from '@kit.BasicServicesKit'
+import { ThemeBgDB } from '../../../../Index'
 
 export class HttpUtils {
   /**
@@ -126,17 +127,23 @@ export class HttpUtils {
       params['city_code'] = cityCode
     }
     const result = await HttpManager.postUrl<CommonResp>(baseUrl_SH + themeBgImagePath, params, 2, 0)
-    const event: emitter.InnerEvent = {
-      eventId: THEME_BG_UPDATE,
-      priority: emitter.EventPriority.LOW
+    if (themeType === 1) {
+      ThemeBgDB.sharedManager().insertThemeBg(cityCode, themeId, weaId, isDay, result.data)
+    } else {
+      ThemeBgDB.sharedManager().insertThemeBg(cityCode, themeId, '', '', result.data)
     }
-    const eventData: emitter.EventData = {
-      data: {
-        cityCode,
-        url: result.data
-      }
-    }
-    emitter.emit(event, eventData)
+    console.log(`set 11111111111_cityCode=${cityCode}_themeId=${themeId}_weaId=${weaId}_isDay=${isDay}_url=${result.data}`);
+    // const event: emitter.InnerEvent = {
+    //   eventId: THEME_BG_UPDATE,
+    //   priority: emitter.EventPriority.LOW
+    // }
+    // const eventData: emitter.EventData = {
+    //   data: {
+    //     cityCode,
+    //     url: result.data
+    //   }
+    // }
+    // emitter.emit(event, eventData)
     return result
   }
 }
