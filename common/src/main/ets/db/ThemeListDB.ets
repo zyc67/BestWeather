@@ -1,6 +1,6 @@
 import { relationalStore, ValuesBucket } from '@kit.ArkData'
 import { Context } from '@kit.AbilityKit'
-import { ThemeModel } from '../../../../../entry/src/main/ets/models/ThemeListModel'
+import { ThemeModel } from '../../../../../entry/src/main/ets/models/ThemeModel'
 
 const THEME_LIST_TABLE = 'theme_list_table'
 

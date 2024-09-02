@@ -31,7 +31,7 @@ export default class EntryAbility extends UIAbility {
       page = 'pages/splash/GuidePage'
     } else if (!hasPrivacy) {
       page = 'pages/splash/PrivacyPage'
-    } else if ((await WeatherUtils.getAllCitys()).length === 0) {
+    } else if ((await WeatherUtils.getAllCities()).length === 0) {
       page = 'pages/city/CityAddPage'
     }
     windowStage.loadContent(page, (err) => {

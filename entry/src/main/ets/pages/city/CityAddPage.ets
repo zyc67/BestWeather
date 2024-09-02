@@ -1,6 +1,9 @@
 import { BaseNaviBar, BOTTOM_AVOID_AREA_HEIGHT, HttpUtils, TOP_NAVI_HEIGHT, startLocation,
   toLocationSetting, toApplicationInfo, WeatherUtils,
-  RouterUtils, Params } from '@bw/common';
+  RouterUtils, Params,
+  PFUtils,
+  LONGITUDE,
+  LATITUDE, postEmitter, ADD_CITY_EVENT_ID} from '@bw/common';
 import { CitySearchView } from '../../component/CitySearchView';
 import { RecommendView } from '../../component/RecommendView';
 import { HotCityModel, HotCityResp } from '../../models/HotCityModel';
@@ -25,13 +28,20 @@ struct CityAddPage {
 
   // 自动定位
   async startLocation() {
+    const locationCity = await WeatherUtils.getLocationCity()
     startLocation(getContext(this), (code: number, address: AMapLocation | undefined) => {
       // code 0成功获取定位信息 -1没有打开手机定位 -2请求权限失败 -3获取定位异常
       if (code === 0) {
         if (address && address.longitude > 0 && address.latitude > 0) {
-          WeatherUtils.getLocationCityWeather(address.longitude.toString(), address.latitude.toString(), false)
-            .then((res) => {
-              this.addCitySuccess()
+          const longitude = address.longitude.toString()
+          const latitude = address.latitude.toString()
+          PFUtils.put(LONGITUDE, longitude, getContext(this))
+          PFUtils.put(LATITUDE, latitude, getContext(this))
+          WeatherUtils.getLocationCityWeather(longitude, latitude, false)
+            .then(() => {
+              WeatherUtils.getLocationCity().then((res) => {
+                this.addCitySuccess(res, locationCity.citycode === undefined)
+              })
             })
         }
       } else if (code === -1) {
@@ -47,12 +57,16 @@ struct CityAddPage {
   // 手动添加城市
   async addCity(city: City) {
     if (city && city.citycode) {
-      const res = await WeatherUtils.getCityWeatherWithCityCode(city.citycode, false)
-      this.addCitySuccess()
+      await WeatherUtils.getCityWeatherWithCityCode(city.citycode, false)
+      const cityModel = await WeatherUtils.getCity(city.citycode)
+      this.addCitySuccess(cityModel, true)
     }
   }
 
-  addCitySuccess() {
+  async addCitySuccess(city: City, add: boolean) {
+    if (add) {
+      postEmitter(ADD_CITY_EVENT_ID, { data: city })
+    }
     const params: Params = RouterUtils.getParams()
     if (params.firstLaunch) {
       RouterUtils.replaceUrl('pages/splash/SelectThemePage')

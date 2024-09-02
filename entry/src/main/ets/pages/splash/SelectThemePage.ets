@@ -1,5 +1,5 @@
 import { HttpUtils, RouterUtils, PFUtils, CURRENT_THEME_ID, DEFAULT_THEME_ID, TOP_NAVI_HEIGHT } from '@bw/common';
-import { CommonResp, ThemeModel } from '../../models/ThemeListModel';
+import { CommonResp, ThemeModel } from '../../models/ThemeModel';
 import { Banner, BannerOptions, AnimatedEnum, SwiperIndicator, BannerMargin } from '@ohos/banner'
 
 @Entry

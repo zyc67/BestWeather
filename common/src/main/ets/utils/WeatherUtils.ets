@@ -20,7 +20,7 @@ export class WeatherUtils {
   static async getCityWeatherWithCityCode(cityCode: string, autoRefresh: boolean): Promise<CityWeatherData | undefined> {
     const data = await HttpUtils.getCityWeatherWithCityCode<WeaCommResp>(cityCode)
     const theme = await getCurrentTheme()
-    if (!autoRefresh && theme.carousel !== 1) { // 非天气数据背景可以直接请求，不用等到天气数据结果出来再去请求背景
+    if (theme && !autoRefresh && theme.carousel !== 1) { // 非天气数据背景可以直接请求，不用等到天气数据结果出来再去请求背景
       HttpUtils.getThemeBgImage(theme.theme_id || '', cityCode, '', '', theme.carousel || 3)
     }
     if (data.resultcode === '0') {
@@ -52,30 +52,32 @@ export class WeatherUtils {
 
     if (!autoRefresh) {
       const theme = await getCurrentTheme()
-      const weaId = getWeaThemeType(data?.condition?.cnwid?.toString() || '').toString()
+      if (theme) {
+        const weaId = getWeaThemeType(data?.condition?.cnwid?.toString() || '').toString()
 
-      const todayWeatherArray = data?.dailys?.dailyweathers?.filter(item => {
-        dayjs.extend(isToday)
-        return dayjs(item.current).isToday()
-      })
+        const todayWeatherArray = data?.dailys?.dailyweathers?.filter(item => {
+          dayjs.extend(isToday)
+          return dayjs(item.current).isToday()
+        })
 
-      let isDay = '0'
-      if (weaId === '1') { // 非晴天1 isDay都传0
-        if (todayWeatherArray?.length || 0 > 0) {
-          const todayWeatherData = todayWeatherArray![0]
-          isDay = isDayTime(todayWeatherData.sr || 0, todayWeatherData.ss || 0)
+        let isDay = '0'
+        if (weaId === '1') { // 非晴天1 isDay都传0
+          if (todayWeatherArray?.length || 0 > 0) {
+            const todayWeatherData = todayWeatherArray![0]
+            isDay = isDayTime(todayWeatherData.sr || 0, todayWeatherData.ss || 0)
+          }
         }
-      }
 
-      if (isLocationCity) {
-        if (theme.carousel === 1) {
-          HttpUtils.getThemeBgImage(theme.theme_id || '', cityCode!, weaId, isDay, theme.carousel || 3)
+        if (isLocationCity) {
+          if (theme.carousel === 1) {
+            HttpUtils.getThemeBgImage(theme.theme_id || '', cityCode!, weaId, isDay, theme.carousel || 3)
+          } else {
+            HttpUtils.getThemeBgImage(theme.theme_id || '', cityCode!, '', '', theme.carousel || 3)
+          }
         } else {
-          HttpUtils.getThemeBgImage(theme.theme_id || '', cityCode!, '', '', theme.carousel || 3)
-        }
-      } else {
-        if (theme.carousel === 1) {
-          HttpUtils.getThemeBgImage(theme.theme_id || '', cityCode!, weaId, isDay, theme.carousel || 3)
+          if (theme.carousel === 1) {
+            HttpUtils.getThemeBgImage(theme.theme_id || '', cityCode!, weaId, isDay, theme.carousel || 3)
+          }
         }
       }
     }
@@ -171,8 +173,12 @@ export class WeatherUtils {
     return await CityDB.sharedManager().queryCity(cityCode)
   }
 
-  static async getAllCitys() {
-    return await CityDB.sharedManager().queryAllCitys()
+  static async getLocationCity() {
+    return await CityDB.sharedManager().queryLocationCity()
+  }
+
+  static async getAllCities() {
+    return await CityDB.sharedManager().queryAllCities()
   }
 
   static async deleteCity(cityCode: string) {

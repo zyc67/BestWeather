@@ -1,4 +1,5 @@
-import { WeatherUtils, getCurrentTheme, getWeaThemeType, isDayTime, ThemeBgDB } from '@bw/common'
+import { WeatherUtils, PFUtils, HttpUtils, getCurrentTheme, getWeaThemeType, isDayTime, ThemeBgDB, LONGITUDE,
+  LATITUDE } from '@bw/common'
 import {
   AdditionalLiveInfos,
   Alert, City, Condition, Dailys, Hourlys, Radar, ToDayAqi, WeaSummary } from '../../models/WeatherModel'
@@ -27,6 +28,7 @@ export struct WeaView {
     // this.registerThemeBgEmitter()
     this.getWeatherData()
     this.requestWeatherData(true)
+    this.getThemeBg()
   }
 
   // registerThemeBgEmitter() {
@@ -69,19 +71,17 @@ export struct WeaView {
       WeatherUtils.getLifeIndex(this.city.citycode).then((lifeIndex) => {
         this.lifeIndex = lifeIndex
       })
-
-      this.getThemeBg()
     }
   }
 
   async requestWeatherData(autoRefresh: boolean) {
     if (this.city.addTime === 0) {
-      await WeatherUtils.getLocationCityWeather(this.city.co || '', this.city.ca || '', autoRefresh)
+      const longitude = await PFUtils.get(LONGITUDE, '', getContext(this)) as string
+      const latitude = await PFUtils.get(LATITUDE, '', getContext(this)) as string
+      await WeatherUtils.getLocationCityWeather(longitude ?? this.city.co, latitude ?? this.city.ca, autoRefresh)
     } else {
       await WeatherUtils.getCityWeatherWithCityCode(this.city.citycode || '', autoRefresh)
     }
-
-    this.getThemeBg()
   }
 
   async getThemeBg() {
@@ -105,13 +105,18 @@ export struct WeaView {
 
     let url = ''
     if (theme.carousel === 1) {
-      url = await ThemeBgDB.sharedManager().queryThemeBg(cityCode || '', theme.theme_id || '', weaId, isDay)
-      console.log(`get 11111111111_cityCode=${cityCode}_themeId=${theme.theme_id}_weaId=${weaId}_isDay=${isDay}_url=${url}`);
+      url = await ThemeBgDB.sharedManager().queryThemeBg('', theme.theme_id || '', weaId, isDay)
+      if (!url) {
+        const result = await HttpUtils.getThemeBgImage(theme.theme_id || '', '', weaId, isDay, theme.carousel)
+        url = result.data
+      }
     } else {
       url = await ThemeBgDB.sharedManager().queryThemeBg(cityCode || '', theme.theme_id || '', '', '')
-      console.log(`get 11111111111_cityCode=${cityCode}_themeId=${theme.theme_id}_weaId=''_isDay=''_url=${url}`);
+      const result = await HttpUtils.getThemeBgImage(theme.theme_id || '', cityCode || '', '', '', theme.carousel || 3)
+      url = result.data
     }
     this.themeBgImage = url || $r('app.media.theme_bg_default')
+    console.log('get 11111111111_' + url)
   }
 
   build() {

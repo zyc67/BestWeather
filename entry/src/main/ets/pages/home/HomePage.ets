@@ -1,4 +1,4 @@
-import { WeatherUtils, RouterUtils, HOME_PAGE_SHOW_EVENT_ID, HttpUtils } from '@bw/common'
+import { WeatherUtils, RouterUtils, receiveEmitter, ADD_CITY_EVENT_ID } from '@bw/common'
 import { City } from '../../models/WeatherModel'
 import { HomeTitleView } from '../../component/home/HomeTitleView'
 import { WeaView } from '../../component/home/WeaView'
@@ -13,11 +13,20 @@ export struct HomePage {
   @State refreshTitle: string = '数据更新中...'
 
   aboutToAppear(): void {
-    const event: emitter.InnerEvent = {
-      eventId: HOME_PAGE_SHOW_EVENT_ID
-    };
-    emitter.on(event, () => {
-      this.getAllCities()
+    // const event: emitter.InnerEvent = {
+    //   eventId: HOME_PAGE_SHOW_EVENT_ID
+    // };
+    // emitter.on(event, () => {
+    //   this.getAllCities()
+    // })
+
+    receiveEmitter(ADD_CITY_EVENT_ID, (res) => {
+      const city = res.data as City
+      if (city.addTime === 0) {
+        this.allCities.unshift(city)
+      } else {
+        this.allCities.push(city)
+      }
     })
 
     this.getAllCities()
@@ -27,7 +36,7 @@ export struct HomePage {
   }
 
   async getAllCities() {
-    this.allCities = await WeatherUtils.getAllCitys()
+    this.allCities = await WeatherUtils.getAllCities()
   }
 
   build() {

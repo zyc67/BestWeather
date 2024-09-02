@@ -36,7 +36,9 @@ function initAmap(context: Context, onLocationListener: (code: number, address: 
 
   locationManger.setLocationListener(AMapLocationType.Single, listener) //设置定位信息监听
   locationManger.setLocationOption(AMapLocationType.Single, options) //设置定位配置项
-  locationManger.requestSingleLocation() //单次定位
+  setTimeout(() => {
+    locationManger.requestSingleLocation() //单次定位
+  }, 1000)
 }
 
 /**

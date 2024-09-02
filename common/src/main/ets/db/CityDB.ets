@@ -96,7 +96,23 @@ export class CityDB {
     return result
   }
 
-  async queryAllCitys() {
+  async queryLocationCity() {
+    const store = CityDB.sharedManager().store
+    let predicates = new relationalStore.RdbPredicates(CITY_TABLE);
+    predicates.equalTo('addTime', 0);
+    let result: City = {}
+    if (store) {
+      const resultSet = await store.query(predicates, ['city'])
+      while (resultSet.goToNextRow()) {
+        result = JSON.parse(resultSet.getString(resultSet.getColumnIndex('city')));
+      }
+      // 释放数据集的内存
+      resultSet.close();
+    }
+    return result
+  }
+
+  async queryAllCities() {
     const store = CityDB.sharedManager().store
     const predicates = new relationalStore.RdbPredicates(CITY_TABLE);
     let result: City[] = [];
@@ -112,5 +128,4 @@ export class CityDB {
     result = result.sort((a,b)=>(a.addTime! - b.addTime!))//按添加时间从小到大
     return result
   }
-
 }

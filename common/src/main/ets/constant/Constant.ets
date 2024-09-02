@@ -8,12 +8,13 @@ export const SCREEN_WIDTH = 'screen_width'
 export const SCREEN_HEIGHT = 'screen_height'
 export const UUID_STRING = 'uuid_string'
 export const CURRENT_THEME_ID = 'current_theme_id'
-
-
+export const LONGITUDE = 'longitude'
+export const LATITUDE = 'latitude'
 
 
 
 
 export const DEFAULT_THEME_ID = '124'
-export const HOME_PAGE_SHOW_EVENT_ID = 1
+// export const HOME_PAGE_SHOW_EVENT_ID = 1
 // export const THEME_BG_UPDATE = 2
+export const ADD_CITY_EVENT_ID = 3

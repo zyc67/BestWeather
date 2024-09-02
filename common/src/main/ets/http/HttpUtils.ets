@@ -7,11 +7,11 @@ import { EnvType, environment, baseUrl, baseUrlTest, baseWeatherPath, cityManage
   themeBgImagePath} from './HttpConstant'
 import { isEmpty } from '../utils'
 // import { THEME_BG_UPDATE } from '../constant'
-import { CommonResp } from '../../../../../entry/src/main/ets/models/ThemeListModel'
+import { CommonResp } from '../../../../../entry/src/main/ets/models/ThemeModel'
 import { util } from '@kit.ArkTS'
 import pako from 'pako'
 import { ThemeListDB } from '../db/ThemeListDB'
-import { SCREEN_HEIGHT, SCREEN_WIDTH } from '../constant'
+import { DEFAULT_THEME_ID, SCREEN_HEIGHT, SCREEN_WIDTH } from '../constant'
 import { emitter } from '@kit.BasicServicesKit'
 import { ThemeBgDB } from '../../../../Index'
 
@@ -47,6 +47,7 @@ export class HttpUtils {
     params['codeType'] = 0 // 编码类型 0表示最美编码；1表示Accu；2表示adcode（民政部编码）
 
     const host = environment === EnvType.Release ? baseUrl : baseUrlTest
+    console.log('主接口请求' + host + baseWeatherPath + JSON.stringify(params))
     return HttpManager.getUrl<T>(host, baseWeatherPath, params, 0, 1)
   }
 
@@ -115,23 +116,29 @@ export class HttpUtils {
   }
 
   static async getThemeBgImage(themeId: string, cityCode: string, weaId: string, isDay: string, themeType: number): Promise<CommonResp> {
+    if (!themeId) {
+      return Promise.resolve({} as CommonResp)
+    }
     let params: Record<string, Object> = {
       'theme_id': themeId,
       'width': Number(AppStorage.get<string>(SCREEN_WIDTH)) || 0,
       'height': Number(AppStorage.get<string>(SCREEN_HEIGHT)) || 0,
     }
+    // 1按天气 2城市 3随机
     if (themeType === 1) {
       params['weather_code'] = weaId
       params['is_day'] = isDay
-    } else {
+    } else if (themeType === 2) {
       params['city_code'] = cityCode
     }
     const result = await HttpManager.postUrl<CommonResp>(baseUrl_SH + themeBgImagePath, params, 2, 0)
     if (themeType === 1) {
-      ThemeBgDB.sharedManager().insertThemeBg(cityCode, themeId, weaId, isDay, result.data)
+      await ThemeBgDB.sharedManager().insertThemeBg(cityCode, themeId, weaId, isDay, result.data)
     } else {
-      ThemeBgDB.sharedManager().insertThemeBg(cityCode, themeId, '', '', result.data)
+      await ThemeBgDB.sharedManager().insertThemeBg(cityCode, themeId, '', '', result.data)
     }
+
+    console.log(`set 11111111111_${JSON.stringify(params)}_url=${result.data}`);
     console.log(`set 11111111111_cityCode=${cityCode}_themeId=${themeId}_weaId=${weaId}_isDay=${isDay}_url=${result.data}`);
     // const event: emitter.InnerEvent = {
     //   eventId: THEME_BG_UPDATE,

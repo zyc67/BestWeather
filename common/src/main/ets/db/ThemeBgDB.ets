@@ -34,7 +34,7 @@ export class ThemeBgDB {
     if (store) {
       try {
         const oldRowId: number = await this.deleteThemeBg(cityCode, themeId, weaId, isDay)
-        const rowId: number = await store.insert(THEME_BG_TABLE, { url })
+        const rowId: number = await store.insert(THEME_BG_TABLE, { cityCode, themeId, weaId, isDay, url })
         return Promise.resolve(rowId)
       } catch {
         return Promise.resolve(-1)

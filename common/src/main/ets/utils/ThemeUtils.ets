@@ -1,5 +1,5 @@
 import { getCurrentDayType, getWeaThemeType } from '.';
-import { ThemeModel } from '../../../../../entry/src/main/ets/models/ThemeListModel';
+import { ThemeModel } from '../../../../../entry/src/main/ets/models/ThemeModel';
 import { CURRENT_THEME_ID, DEFAULT_THEME_ID } from '../constant/Constant';
 import { ThemeListDB } from '../db/ThemeListDB'
 import { PFUtils } from './PFUtils';
@@ -121,6 +121,9 @@ export async function homeBgColor(weaId: string, sunRise: number, sunSet: number
 // 获取tabbar非选中icon
 export async function getTabbarNormalIcons() {
   const theme = await getCurrentTheme()
+  if (!theme) {
+    return []
+  }
   const iconNonSelectedString = theme.icon_non_selected
   let icons: string[] = []
   if (iconNonSelectedString) {
@@ -138,6 +141,9 @@ export async function getTabbarNormalIcons() {
 // 获取tabbar选中icon
 export async function getTabbarSelectedIcons() {
   const theme = await getCurrentTheme()
+  if (!theme) {
+    return []
+  }
   const iconSelectedString = theme.icon_selected
   let icons: string[] = []
   if (iconSelectedString) {

@@ -1,4 +1,4 @@
-import { getTabbarSelectedIcons, getTabbarNormalIcons, getTabbarItemSelectedColor, getTabbarItemNormalColor, BOTTOM_AVOID_AREA_HEIGHT, HOME_PAGE_SHOW_EVENT_ID } from '@bw/common'
+import { getTabbarSelectedIcons, getTabbarNormalIcons, getTabbarItemSelectedColor, getTabbarItemNormalColor, BOTTOM_AVOID_AREA_HEIGHT } from '@bw/common'
 import { HomePage } from '../home/HomePage'
 import { NinetyDayPage } from '../ninetyDay/NinetyDayPage'
 import { FindPage } from '../find/FindPage'
@@ -20,24 +20,24 @@ struct MainPage {
     this.getThemeData()
   }
 
-  onPageShow(): void {
-    this.homePageShow()
-  }
-
+  // onPageShow(): void {
+  //   this.homePageShow()
+  // }
+  //
   pageChange(index: number) {
     this.currentIndex = index
-    if (index === 0) {
-      this.homePageShow()
-    }
+    // if (index === 0) {
+    //   this.homePageShow()
+    // }
   }
-
-  homePageShow() {
-    const event: emitter.InnerEvent = {
-      eventId: HOME_PAGE_SHOW_EVENT_ID,
-      priority: emitter.EventPriority.LOW
-    }
-    emitter.emit(event)
-  }
+  //
+  // homePageShow() {
+  //   const event: emitter.InnerEvent = {
+  //     eventId: HOME_PAGE_SHOW_EVENT_ID,
+  //     priority: emitter.EventPriority.LOW
+  //   }
+  //   emitter.emit(event)
+  // }
 
   async getThemeData() {
     this.selectedIcons = await getTabbarSelectedIcons()
