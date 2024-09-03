@@ -5,6 +5,7 @@
     "pages/webview/BaseWebPage",
     "pages/splash/SelectThemePage",
     "pages/main/MainPage",
-    "pages/city/CityAddPage"
+    "pages/city/CityAddPage",
+    "pages/theme/ThemeManagerPage"
   ]
 }

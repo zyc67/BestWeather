@@ -34,6 +34,7 @@ export default class EntryAbility extends UIAbility {
     } else if ((await WeatherUtils.getAllCities()).length === 0) {
       page = 'pages/city/CityAddPage'
     }
+    // page = 'pages/theme/ThemeManagerPage'
     windowStage.loadContent(page, (err) => {
       if (err.code) {
         hilog.error(0x0000, 'testTag', 'Failed to load the content. Cause: %{public}s', JSON.stringify(err) ?? '');

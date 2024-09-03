@@ -1,4 +1,4 @@
-import { HttpUtils, RouterUtils, PFUtils, CURRENT_THEME_ID, DEFAULT_THEME_ID, TOP_NAVI_HEIGHT } from '@bw/common';
+import { HttpUtils, RouterUtils, PFUtils, CURRENT_THEME_ID, DEFAULT_THEME_ID, CURRENT_THEME_TYPE, DEFAULT_THEME_TYPE, TOP_NAVI_HEIGHT } from '@bw/common';
 import { CommonResp, ThemeModel } from '../../models/ThemeModel';
 import { Banner, BannerOptions, AnimatedEnum, SwiperIndicator, BannerMargin } from '@ohos/banner'
 
@@ -58,12 +58,14 @@ struct SelectThemePage {
   skip() {
     RouterUtils.replaceUrl('pages/main/MainPage')
     PFUtils.put(CURRENT_THEME_ID, DEFAULT_THEME_ID, getContext())
+    PFUtils.put(CURRENT_THEME_TYPE, DEFAULT_THEME_TYPE, getContext())
   }
 
   // 确定
   confirm() {
     const theme = this.themeList[this.currentPos]
     PFUtils.put(CURRENT_THEME_ID, theme.theme_id || DEFAULT_THEME_ID, getContext())
+    PFUtils.put(CURRENT_THEME_TYPE, theme.clean_install_layout || 1, getContext())
     RouterUtils.replaceUrl('pages/main/MainPage')
   }
 

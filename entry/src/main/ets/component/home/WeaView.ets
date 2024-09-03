@@ -1,13 +1,10 @@
-import { WeatherUtils, PFUtils, HttpUtils, getCurrentTheme, getWeaThemeType, isDayTime, ThemeBgDB, LONGITUDE,
-  LATITUDE } from '@bw/common'
+import { WeatherUtils, PFUtils, HttpUtils, getCurrentTheme, getWeaThemeType, receiveEmitter, isDayTime, ThemeBgDB, LONGITUDE,
+  LATITUDE, CHANGE_THEME_EVENT_ID } from '@bw/common'
 import {
   AdditionalLiveInfos,
   Alert, City, Condition, Dailys, Hourlys, Radar, ToDayAqi, WeaSummary } from '../../models/WeatherModel'
-import { emitter } from '@kit.BasicServicesKit'
 import dayjs from 'dayjs'
 import isToday from 'dayjs/plugin/isToday'
-
-// import { THEME_BG_UPDATE } from '@bw/common/src/main/ets/constant/Constant'
 
 @Component
 export struct WeaView {
@@ -24,26 +21,17 @@ export struct WeaView {
   @State lifeIndex: AdditionalLiveInfos = {}
 
   aboutToAppear(): void {
-    console.log('1111111111111_' + this.city.localizedname)
-    // this.registerThemeBgEmitter()
+    this.registerThemeBgEmitter()
     this.getWeatherData()
     this.requestWeatherData(true)
     this.getThemeBg()
   }
 
-  // registerThemeBgEmitter() {
-  //   const event: emitter.InnerEvent = {
-  //     eventId: THEME_BG_UPDATE,
-  //     priority: emitter.EventPriority.LOW
-  //   }
-  //
-  //   emitter.on(event, (eventData: emitter.EventData) => {
-  //     const cityCode = eventData.data!['cityCode'] as string
-  //     if (cityCode === this.city.citycode) {
-  //       this.themeBgImage = eventData.data!['url']
-  //     }
-  //   })
-  // }
+  registerThemeBgEmitter() {
+    receiveEmitter(CHANGE_THEME_EVENT_ID, () => {
+      this.getThemeBg()
+    })
+  }
 
   getWeatherData() {
     if (this.city.citycode) {

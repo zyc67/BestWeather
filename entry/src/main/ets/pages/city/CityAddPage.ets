@@ -17,7 +17,7 @@ struct CityAddPage {
   firstLaunch: boolean = false
   @State hotCityModel: HotCityModel = {}
   private topRectHeight = px2vp(AppStorage.get<number>(TOP_NAVI_HEIGHT) || 0)
-  private bottomRectHeight = px2vp(AppStorage.get<number>(BOTTOM_AVOID_AREA_HEIGHT) || 0)
+  private bottomRectHeight = AppStorage.get<number>(BOTTOM_AVOID_AREA_HEIGHT) || 0
 
   async aboutToAppear() {
     const res = await HttpUtils.hotCity<HotCityResp>()
@@ -99,7 +99,6 @@ struct CityAddPage {
           // 手动添加城市
           this.addCity(city)
         }})
-          .layoutWeight(1)
       }
       .margin({
         top: 60 + this.topRectHeight

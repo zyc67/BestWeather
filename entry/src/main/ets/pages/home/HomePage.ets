@@ -11,6 +11,7 @@ export struct HomePage {
   @State currentIndex: number = 0
   @State refreshing: boolean = false
   @State refreshTitle: string = '数据更新中...'
+  changeIndexAction:(index: number) => void = () => {}
 
   aboutToAppear(): void {
     // const event: emitter.InnerEvent = {
@@ -39,6 +40,11 @@ export struct HomePage {
     this.allCities = await WeatherUtils.getAllCities()
   }
 
+  changeIndex(index: number) {
+    this.currentIndex = index
+    this.changeIndexAction(index)
+  }
+
   build() {
     Stack({alignContent: Alignment.Top}) {
       Tabs({barPosition: BarPosition.Start}) {
@@ -51,7 +57,7 @@ export struct HomePage {
       .barHeight(0)
       .edgeEffect(EdgeEffect.None)
       .onChange((index) => {
-        this.currentIndex = index
+        this.changeIndex(index)
       })
 
       if (this.allCities.length > 0) {
@@ -67,8 +73,12 @@ export struct HomePage {
           toCityManagerPageAction: () => {
             RouterUtils.pushUrl('pages/city/CityAddPage', { firstLaunch: false })
           },
-          showCategoryViewAction: () => {
+          showCategoryViewAction: (index: number) => {
+            if (index === 0) {
 
+            } else if (index === 1) {
+              RouterUtils.pushUrl('pages/theme/ThemeManagerPage')
+            }
           }
         })
       }

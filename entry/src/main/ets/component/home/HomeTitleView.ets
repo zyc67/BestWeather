@@ -16,7 +16,7 @@ export struct HomeTitleView {
   @Prop refreshTitle: string
   @Prop isLocation: boolean
   toCityManagerPageAction: () => void = () => {}
-  showCategoryViewAction: () => void = () => {}
+  showCategoryViewAction: (index: number) => void = () => {}
   @State indicatorConfig: IndicatorConfig = new IndicatorConfig(this.cityCount, this.currentIndex, '#FFFFFF', '#FFFFFF80')
   @State translateY: number = 0
 
@@ -44,10 +44,6 @@ export struct HomeTitleView {
 
   toCityManagerPage() {
     this.toCityManagerPageAction()
-  }
-
-  showCategoryView() {
-    this.showCategoryViewAction()
   }
 
   @Builder locationBuilder() {
@@ -79,6 +75,38 @@ export struct HomeTitleView {
       .margin({
         left: 20
       })
+      .bindMenu([
+        {
+          value: '天气地图',
+          action: () => {
+            this.showCategoryViewAction(0)
+          }
+        },
+        {
+          value: '个性主题',
+          action: () => {
+            this.showCategoryViewAction(1)
+          }
+        },
+        // {
+        //   value: '灵动组件',
+        //   action: () => {
+        //     this.showCategoryViewAction(2)
+        //   }
+        // },
+        {
+          value: '关闭广告',
+          action: () => {
+            this.showCategoryViewAction(2)
+          }
+        },
+        {
+          value: '分享精彩',
+          action: () => {
+            this.showCategoryViewAction(3)
+          }
+        },
+      ])
   }
 
   build() {

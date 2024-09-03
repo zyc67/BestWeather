@@ -1,10 +1,10 @@
 import { getCurrentDayType, getWeaThemeType } from '.';
 import { ThemeModel } from '../../../../../entry/src/main/ets/models/ThemeModel';
-import { CURRENT_THEME_ID, DEFAULT_THEME_ID } from '../constant/Constant';
+import { CURRENT_THEME_ID, CURRENT_THEME_TYPE, DEFAULT_THEME_ID, DEFAULT_THEME_TYPE } from '../constant/Constant';
 import { ThemeListDB } from '../db/ThemeListDB'
 import { PFUtils } from './PFUtils';
 
-async function getThemeList() {
+export async function getThemeList() {
   const themeList = await ThemeListDB.sharedManager().queryThemeList()
   return themeList
 }
@@ -18,6 +18,10 @@ export async function getCurrentTheme() {
   const themeId = await getCurrentThemeId()
   const themes = themeList.filter(item => item.theme_id === themeId)
   return themes.length > 0 ? themes[0] : {} as ThemeModel
+}
+
+export async function getCurrentThemeType() {
+  return await PFUtils.get(CURRENT_THEME_TYPE, DEFAULT_THEME_TYPE, getContext())
 }
 
 // tabbar背景颜色

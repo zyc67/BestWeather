@@ -6,7 +6,6 @@ import { EnvType, environment, baseUrl, baseUrlTest, baseWeatherPath, cityManage
   themeListPath,
   themeBgImagePath} from './HttpConstant'
 import { isEmpty } from '../utils'
-// import { THEME_BG_UPDATE } from '../constant'
 import { CommonResp } from '../../../../../entry/src/main/ets/models/ThemeModel'
 import { util } from '@kit.ArkTS'
 import pako from 'pako'
@@ -140,17 +139,7 @@ export class HttpUtils {
 
     console.log(`set 11111111111_${JSON.stringify(params)}_url=${result.data}`);
     console.log(`set 11111111111_cityCode=${cityCode}_themeId=${themeId}_weaId=${weaId}_isDay=${isDay}_url=${result.data}`);
-    // const event: emitter.InnerEvent = {
-    //   eventId: THEME_BG_UPDATE,
-    //   priority: emitter.EventPriority.LOW
-    // }
-    // const eventData: emitter.EventData = {
-    //   data: {
-    //     cityCode,
-    //     url: result.data
-    //   }
-    // }
-    // emitter.emit(event, eventData)
+
     return result
   }
 }
