@@ -1,4 +1,4 @@
-import { BaseNaviBar, getThemeList, getCurrentThemeId, getCurrentThemeType, PFUtils, postEmitter,
+import { BaseNaviBar, getThemeList, getCurrentThemeId, getCurrentThemeType, getCurrentTheme, PFUtils, postEmitter,
   DEFAULT_THEME_TYPE, BOTTOM_AVOID_AREA_HEIGHT, CURRENT_THEME_ID, CURRENT_THEME_TYPE, CHANGE_THEME_EVENT_ID } from '@bw/common';
 import { ThemeTopView } from '../../component/ThemeTopView'
 import { ThemeListView } from '../../component/ThemeListView'
@@ -11,13 +11,15 @@ struct ThemeManagerPage {
   private bottomRectHeight = AppStorage.get<number>(BOTTOM_AVOID_AREA_HEIGHT) || 0
   private listScroller: ListScroller = new ListScroller()
   @State offsetX: number = 0
-  @State currentIndex: number = 0
+  @State @Watch('switchThemeTab') currentIndex: number = 0
   @State themeList: ThemeModel[] = []
   @State usedThemeId: string = ''
   @State usedThemeType: number = DEFAULT_THEME_TYPE
+  @State topImages: string[] = []
 
   aboutToAppear(): void {
     this.getThemeInfo()
+    this.switchThemeTab()
   }
 
   themeUsed(themeId: string, themeType: number) {
@@ -34,9 +36,15 @@ struct ThemeManagerPage {
     this.usedThemeType = await getCurrentThemeType() as number
   }
 
+  async switchThemeTab() {
+    const theme = await getCurrentTheme()
+    this.topImages = (this.usedThemeType === 1 ? theme.detail_imgs?.split(';') : theme.detail_imgs_concise?.split(';')) || []
+  }
+
   @Builder header() {
     ThemeListTab({offsetX: this.offsetX, action: (index: number) => {
       this.listScroller.scrollToIndex(index, true)
+      this.currentIndex = index
     }})
       .width('100%')
       .height(56)
@@ -52,7 +60,8 @@ struct ThemeManagerPage {
 
       List() {
         ListItemGroup() {
-          ThemeTopView()
+          ThemeTopView({images: this.topImages, type: this.currentIndex === 0 ? 2 : 1})
+            .height(263).width('100%').padding({ left: 10, right: 10 })
         }
         ListItemGroup({ header: this.header()}) {
           ListItem() {
