@@ -93,14 +93,14 @@ struct MainPage {
     Column() {
      Tabs({barPosition: BarPosition.End}) {
         TabContent() {
-          HomePage({changeIndexAction: (index: number) => {
-            this.changeIndex(index)
-          }})
+          NinetyDayPage()
         }
         .tabBar(this.tabBuilder('最美', 0))
 
        TabContent() {
-          NinetyDayPage()
+         HomePage({changeIndexAction: (index: number) => {
+           this.changeIndex(index)
+         }})
        }
        .tabBar(this.tabBuilder('90天', 1))
 

@@ -33,6 +33,8 @@ export const baseCalendarUrl: string = 'https://zmcalender-api.colaapp.cn/'
 // path
 // 天气主接口
 export const baseWeatherPath: string = 'openWeatherDataService/v1/weather'
+// 90天
+export const ninetyDaysPath: string = 'openWeatherDataService/getNinetyDailys'
 // 城市管理
 export const cityManagerWeatherPath: string = 'openWeatherDataService/getCityManageData'
 // 城市搜索

@@ -4,7 +4,8 @@ import { EnvType, environment, baseUrl, baseUrlTest, baseWeatherPath, cityManage
   hotCityPath,
   baseUrl_SH,
   themeListPath,
-  themeBgImagePath} from './HttpConstant'
+  themeBgImagePath,
+  ninetyDaysPath} from './HttpConstant'
 import { isEmpty } from '../utils'
 import { CommonResp } from '../../../../../entry/src/main/ets/models/ThemeModel'
 import { util } from '@kit.ArkTS'
@@ -48,6 +49,18 @@ export class HttpUtils {
     const host = environment === EnvType.Release ? baseUrl : baseUrlTest
     console.log('主接口请求' + host + baseWeatherPath + JSON.stringify(params))
     return HttpManager.getUrl<T>(host, baseWeatherPath, params, 0, 1)
+  }
+
+  static getNinetyDaysData<T>(cityCode: string): Promise<T> {
+    let params: Record<string, Object> = {}
+    if (!isEmpty(cityCode)) {
+      params['citycode'] = cityCode
+    }
+    params['codeType'] = 0 // 编码类型 0表示最美编码；1表示Accu；2表示adcode（民政部编码）
+
+    const host = environment === EnvType.Release ? baseUrl : baseUrlTest
+    console.log('主接口请求' + host + baseWeatherPath + JSON.stringify(params))
+    return HttpManager.getUrl<T>(host, ninetyDaysPath, params, 0, 1)
   }
 
   /**

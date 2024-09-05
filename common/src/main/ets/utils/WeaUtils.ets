@@ -1,4 +1,5 @@
 import dayjs from 'dayjs'
+import { ConditionDay, ConditionNight } from '../../../../../entry/src/main/ets/models/WeatherModel'
 import { getCurrentTimestamp } from '.'
 
 // 通过天气码和主题天气码匹配
@@ -47,4 +48,46 @@ export function getCurrentDayType(sunRise: number, sunSet: number) {
 export function isDayTime(sunRise: number, sunSet: number) {
   const dayType = getCurrentDayType(sunRise, sunSet)
   return dayType === 1 ? '1' : '0'
+}
+
+export enum WeatherType {
+  Sun, // 晴
+  Cloudy, // 多云
+  Overcast, // 阴
+  Rain, // 雨
+  Snow, // 雪
+  Alert // 特殊天气 预警
+}
+
+export function getWeatherTypeWithWeaId(weaId: string) {
+  let result = WeatherType.Sun
+  if (['0'].indexOf(weaId) != -1) { // 晴
+    result = WeatherType.Sun
+  } else if (['1'].indexOf(weaId) != -1) { // 多云
+    result = WeatherType.Cloudy
+  } else if (['2'].indexOf(weaId) != -1) { // 阴
+    result = WeatherType.Overcast
+  } else if (['3', '4', '5', '7', '8', '9', '10', '11', '12', '19', '21', '22', '23', '24', '25'].indexOf(weaId) != -1) { // 雨
+    result = WeatherType.Rain
+  } else if (['6', '13', '14', '15', '16', '17', '26', '27', '28', '34'].indexOf(weaId) != -1) { // 雪
+    result = WeatherType.Snow
+  } else if (['18', '35'].indexOf(weaId) != -1) { // 雾
+    result = WeatherType.Alert
+  } else if (['20', '29', '30', '31', '32', '33'].indexOf(weaId) != -1) { // 沙尘
+    result = WeatherType.Alert
+  } else if (['53'].indexOf(weaId) != -1) { // 霾
+    result = WeatherType.Alert
+  }
+  return result
+}
+
+export function getWeatherType(conditionDay: ConditionDay, conditionNight: ConditionNight) {
+  const dayWeatherType = getWeatherTypeWithWeaId(conditionDay.cnwid?.toString() || '1')
+  const nightWeatherType = getWeatherTypeWithWeaId(conditionNight.cnwid?.toString() || '1')
+  if (dayWeatherType === WeatherType.Rain || nightWeatherType === WeatherType.Rain) {
+    return WeatherType.Rain
+  } else if (dayWeatherType === WeatherType.Snow || nightWeatherType === WeatherType.Snow) {
+    return WeatherType.Snow
+  }
+  return WeatherType.Sun
 }
