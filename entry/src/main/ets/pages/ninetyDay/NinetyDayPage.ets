@@ -1,14 +1,16 @@
 import { HttpUtils } from '@bw/common/src/main/ets/http/HttpUtils'
-import { NinetyDaysResp, NinetyWeaTrendModel } from '../../models/NinetyDaysResp'
+import { NinetyDaysResp, NinetyWeaTrend, NinetyWeaTrendModel, NinetyWeaTrendChartModel } from '../../models/NinetyDaysResp'
 import { NinetyUtils } from '../../utils/NinetyUtils'
 import { NinetyNaviTitleView } from '../../component/ninety/NinetyNaviTitleView'
 import { WeatherUtils, TOP_NAVI_HEIGHT, BaseCell } from '@bw/common'
 import { NinetyTrendView } from '../../component/ninety/NinetyTrendView'
+import { NinetyTrendChartView } from '../../component/ninety/NinetyTrendChartView'
 
 @Component
 export struct NinetyDayPage {
   private topRectHeight = px2vp(AppStorage.get<number>(TOP_NAVI_HEIGHT) || 0)
-  @State ninetyWeaTrend: NinetyWeaTrendModel[] = []
+  @State weaTrendModel: NinetyWeaTrendModel[] = []
+  @State weaTrendChartModel: NinetyWeaTrendChartModel = {} as NinetyWeaTrendChartModel
   @State title: string = '90天天气趋势'
   @State subtitle: string = ''
   @State hasMultiplyCities: boolean = false
@@ -26,7 +28,9 @@ export struct NinetyDayPage {
     const ninetyDataResp = await HttpUtils.getNinetyDaysData<NinetyDaysResp>(city.citycode || '')
     if (ninetyDataResp.resultcode === '0') {
       const ninetyData = ninetyDataResp.data.dailys.dailyweathers
-      this.ninetyWeaTrend = NinetyUtils.getWeaTrendData(ninetyData)
+      const ninetyWeaTrend = NinetyUtils.getWeaTrendData(ninetyData)
+      this.weaTrendModel = ninetyWeaTrend.weaTrendModel
+      this.weaTrendChartModel = ninetyWeaTrend.weaTrendChartModel
     }
   }
 
@@ -41,7 +45,8 @@ export struct NinetyDayPage {
       List({ space: 12 }) {
         ListItem() {
           BaseCell() {
-            NinetyTrendView({ninetyWeaTrend: this.ninetyWeaTrend})
+            NinetyTrendView({weaTrend: this.weaTrendModel})
+            NinetyTrendChartView({weaTrend: this.weaTrendModel, weaTrendChartModel: this.weaTrendChartModel})
           }
         }
       }

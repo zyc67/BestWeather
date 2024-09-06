@@ -67,6 +67,11 @@ export enum WeaTrendType {
   Rain // 降雨
 }
 
+export class NinetyWeaTrend {
+  weaTrendModel: NinetyWeaTrendModel[] = []
+  weaTrendChartModel: NinetyWeaTrendChartModel = {} as NinetyWeaTrendChartModel
+}
+
 export class NinetyWeaTrendModel {
   days: number = 0
   firstDate: number = 0
@@ -75,4 +80,11 @@ export class NinetyWeaTrendModel {
   icon: ResourceStr = ''
   title: string = ''
   firstDateString: string = '--'
+}
+
+export class NinetyWeaTrendChartModel {
+  highTemps: number[] = [] // 所有高温
+  lowTemps: number[] = [] // 所有低温
+  highTempMax: number = 0 // 高温最大值
+  lowTempMin: number = 0 // 低温最小值
 }

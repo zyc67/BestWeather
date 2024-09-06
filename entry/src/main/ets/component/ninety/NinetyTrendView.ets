@@ -2,17 +2,18 @@ import { NinetyWeaTrendModel } from '../../models/NinetyDaysResp'
 
 @Component
 export struct NinetyTrendView {
-  @Prop ninetyWeaTrend: NinetyWeaTrendModel[]
+  @Prop weaTrend: NinetyWeaTrendModel[]
   
   build() {
     Grid() {
-      ForEach(this.ninetyWeaTrend, (item: NinetyWeaTrendModel, index: number) => {
+      ForEach(this.weaTrend, (item: NinetyWeaTrendModel, index: number) => {
         GridItem() {
           NinetyTrendItem({item, index})
         }
       })
     }
     .columnsTemplate('1fr 1fr 1fr')
+    .rowsGap(10)
     .padding(10)
   }
 }

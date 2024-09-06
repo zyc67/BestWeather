@@ -1,9 +1,15 @@
 import { getWeatherType, WeatherType } from '@bw/common'
-import { NinetyModel, NinetyWeaTrendModel, WeaTrendType } from '../models/NinetyDaysResp'
+import { NinetyModel, NinetyWeaTrend, NinetyWeaTrendModel, NinetyWeaTrendChartModel, WeaTrendType } from '../models/NinetyDaysResp'
 import dayjs from 'dayjs'
 
 export class NinetyUtils {
   static getWeaTrendData(ninetyData: NinetyModel[]) {
+    let highTemps: number[] = [] // 所有高温
+    let lowTemps: number[] = [] // 所有低温
+    let highTempMax: number = Number.MIN_VALUE // 高温最大值
+    let lowTempMin: number = Number.MAX_VALUE // 低温最小值
+    const weaTrendChartModel: NinetyWeaTrendChartModel = new NinetyWeaTrendChartModel()
+
     let preHighTemp = 0 // 前一天高温
     let preLowTemp = 0 // 前一天低温
     let hotIndexes: number[] = [] // 高温
@@ -12,6 +18,7 @@ export class NinetyUtils {
     let tempDownIndexes: number[] = []// 降温
     let rainIndexes: number[] = [] // 降雨
     let snowIndexes: number[] = []// 降雪
+
     for (let index = 0; index < ninetyData.length; index++) {
       const model = ninetyData[index]
       if (index === 0) {
@@ -21,6 +28,24 @@ export class NinetyUtils {
       }
       let nextHighTemp = model.ht // 后一天高温
       let nextLowTemp = model.lt // 后一天低温
+
+      highTemps.push(nextHighTemp)
+      lowTemps.push(nextLowTemp)
+
+      if (nextHighTemp > highTempMax) {
+        highTempMax = nextHighTemp
+      }
+      if (nextLowTemp < lowTempMin) {
+        lowTempMin = nextLowTemp
+      }
+
+
+      weaTrendChartModel.highTemps = highTemps
+      weaTrendChartModel.lowTemps = lowTemps
+      weaTrendChartModel.highTempMax = highTempMax
+      weaTrendChartModel.lowTempMin = lowTempMin
+
+
       // 高、低温
       if (nextHighTemp >= 35) {
         hotIndexes.push(index)
@@ -59,10 +84,10 @@ export class NinetyUtils {
       }
     }
 
-    let ninetyWeaTrend: NinetyWeaTrendModel[] = []
+    const ninetyWeaTrendModel: NinetyWeaTrendModel[] = []
 
     // 高温
-    let hot: NinetyWeaTrendModel = new NinetyWeaTrendModel()
+    const hot: NinetyWeaTrendModel = new NinetyWeaTrendModel()
     hot.trendType = WeaTrendType.Hot
     hot.days = hotIndexes.length
     hot.icon = $r('app.media.icon_ninety_temperature_hot')
@@ -72,10 +97,10 @@ export class NinetyUtils {
       hot.indexes = hotIndexes.join(',')
       hot.firstDateString = dayjs(hot.firstDate).format('MM月DD日')
     }
-    ninetyWeaTrend.push(hot)
+    ninetyWeaTrendModel.push(hot)
 
     // 低温
-    let cold: NinetyWeaTrendModel = new NinetyWeaTrendModel()
+    const cold: NinetyWeaTrendModel = new NinetyWeaTrendModel()
     cold.trendType = WeaTrendType.Cold
     cold.days = coldIndexes.length
     cold.icon = $r('app.media.icon_ninety_temperature_cold')
@@ -85,10 +110,10 @@ export class NinetyUtils {
       cold.indexes = coldIndexes.join(',')
       cold.firstDateString = dayjs(cold.firstDate).format('MM月DD日')
     }
-    ninetyWeaTrend.push(cold)
+    ninetyWeaTrendModel.push(cold)
 
     // 降雨
-    let rain: NinetyWeaTrendModel = new NinetyWeaTrendModel()
+    const rain: NinetyWeaTrendModel = new NinetyWeaTrendModel()
     rain.trendType = WeaTrendType.Rain
     rain.days = rainIndexes.length
     rain.icon = $r('app.media.icon_ninety_temperature_rain')
@@ -98,10 +123,10 @@ export class NinetyUtils {
       rain.indexes = rainIndexes.join(',')
       rain.firstDateString = dayjs(rain.firstDate).format('MM月DD日')
     }
-    ninetyWeaTrend.push(rain)
+    ninetyWeaTrendModel.push(rain)
 
     // 升温
-    let heatUp: NinetyWeaTrendModel = new NinetyWeaTrendModel()
+    const heatUp: NinetyWeaTrendModel = new NinetyWeaTrendModel()
     heatUp.trendType = WeaTrendType.HeatUp
     heatUp.days = tempUpIndexes.length
     heatUp.icon = $r('app.media.icon_ninety_temperature_ascend')
@@ -111,10 +136,10 @@ export class NinetyUtils {
       heatUp.indexes = tempUpIndexes.join(',')
       heatUp.firstDateString = dayjs(heatUp.firstDate).format('MM月DD日')
     }
-    ninetyWeaTrend.push(heatUp)
+    ninetyWeaTrendModel.push(heatUp)
 
     // 降温
-    let heatLow: NinetyWeaTrendModel = new NinetyWeaTrendModel()
+    const heatLow: NinetyWeaTrendModel = new NinetyWeaTrendModel()
     heatLow.trendType = WeaTrendType.HeatLow
     heatLow.days = tempDownIndexes.length
     heatLow.icon = $r('app.media.icon_ninety_temperature_descend')
@@ -124,10 +149,10 @@ export class NinetyUtils {
       heatLow.indexes = tempDownIndexes.join(',')
       heatLow.firstDateString = dayjs(heatLow.firstDate).format('MM月DD日')
     }
-    ninetyWeaTrend.push(heatLow)
+    ninetyWeaTrendModel.push(heatLow)
 
     // 降雪
-    let snow: NinetyWeaTrendModel = new NinetyWeaTrendModel()
+    const snow: NinetyWeaTrendModel = new NinetyWeaTrendModel()
     snow.trendType = WeaTrendType.Snow
     snow.days = snowIndexes.length
     snow.icon = $r('app.media.icon_ninety_temperature_snow')
@@ -137,7 +162,11 @@ export class NinetyUtils {
       snow.indexes = snowIndexes.join(',')
       snow.firstDateString = dayjs(snow.firstDate).format('MM月DD日')
     }
-    ninetyWeaTrend.push(snow)
+    ninetyWeaTrendModel.push(snow)
+
+    const ninetyWeaTrend: NinetyWeaTrend = new NinetyWeaTrend()
+    ninetyWeaTrend.weaTrendModel = ninetyWeaTrendModel
+    ninetyWeaTrend.weaTrendChartModel = weaTrendChartModel
 
     return ninetyWeaTrend
   }
