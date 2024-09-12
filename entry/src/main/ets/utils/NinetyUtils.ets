@@ -1,4 +1,4 @@
-import { getWeatherType, WeatherType } from '@bw/common'
+import { getWeatherType, WeatherType, getCurrentDay } from '@bw/common'
 import { NinetyModel, NinetyWeaTrend, NinetyWeaTrendModel, NinetyWeaTrendChartModel, WeaTrendType } from '../models/NinetyDaysResp'
 import dayjs from 'dayjs'
 
@@ -19,8 +19,13 @@ export class NinetyUtils {
     let rainIndexes: number[] = [] // 降雨
     let snowIndexes: number[] = []// 降雪
 
+    const validNinetyData:NinetyModel[] = []
     for (let index = 0; index < ninetyData.length; index++) {
       const model = ninetyData[index]
+      // 今天 + 之后 的天气数据
+      if (model.ptime >= getCurrentDay()) {
+        validNinetyData.push(model)
+      }
       if (index === 0) {
         preHighTemp = model.ht
         preLowTemp = model.lt
@@ -167,7 +172,7 @@ export class NinetyUtils {
     const ninetyWeaTrend: NinetyWeaTrend = new NinetyWeaTrend()
     ninetyWeaTrend.weaTrendModel = ninetyWeaTrendModel
     ninetyWeaTrend.weaTrendChartModel = weaTrendChartModel
-
+    ninetyWeaTrend.ninetyData = validNinetyData
     return ninetyWeaTrend
   }
 }

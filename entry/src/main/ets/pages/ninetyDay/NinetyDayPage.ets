@@ -1,22 +1,25 @@
 import { HttpUtils } from '@bw/common/src/main/ets/http/HttpUtils'
-import { NinetyDaysResp, NinetyWeaTrend, NinetyWeaTrendModel, NinetyWeaTrendChartModel } from '../../models/NinetyDaysResp'
+import { NinetyDaysResp, NinetyWeaTrendModel, NinetyWeaTrendChartModel,
+  NinetyModel } from '../../models/NinetyDaysResp'
 import { NinetyUtils } from '../../utils/NinetyUtils'
 import { NinetyNaviTitleView } from '../../component/ninety/NinetyNaviTitleView'
 import { WeatherUtils, TOP_NAVI_HEIGHT, BaseCell } from '@bw/common'
 import { NinetyTrendView } from '../../component/ninety/NinetyTrendView'
 import { NinetyTrendChartView } from '../../component/ninety/NinetyTrendChartView'
+import { JSON } from '@kit.ArkTS'
 
 @Component
 export struct NinetyDayPage {
   private topRectHeight = px2vp(AppStorage.get<number>(TOP_NAVI_HEIGHT) || 0)
+  @State ninetyData: NinetyModel[] = []
   @State weaTrendModel: NinetyWeaTrendModel[] = []
-  @State weaTrendChartModel: NinetyWeaTrendChartModel = {} as NinetyWeaTrendChartModel
+  @State weaTrendChartModel: NinetyWeaTrendChartModel | undefined = undefined
   @State title: string = '90天天气趋势'
   @State subtitle: string = ''
   @State hasMultiplyCities: boolean = false
 
   aboutToAppear(): void {
-     this.requestNinetyDaysData()
+    this.requestNinetyDaysData()
   }
 
   async requestNinetyDaysData() {
@@ -29,6 +32,7 @@ export struct NinetyDayPage {
     if (ninetyDataResp.resultcode === '0') {
       const ninetyData = ninetyDataResp.data.dailys.dailyweathers
       const ninetyWeaTrend = NinetyUtils.getWeaTrendData(ninetyData)
+      this.ninetyData = ninetyWeaTrend.ninetyData
       this.weaTrendModel = ninetyWeaTrend.weaTrendModel
       this.weaTrendChartModel = ninetyWeaTrend.weaTrendChartModel
     }
@@ -46,7 +50,7 @@ export struct NinetyDayPage {
         ListItem() {
           BaseCell() {
             NinetyTrendView({weaTrend: this.weaTrendModel})
-            NinetyTrendChartView({weaTrend: this.weaTrendModel, weaTrendChartModel: this.weaTrendChartModel})
+            NinetyTrendChartView({ninetyData: this.ninetyData, weaTrendChartModel: this.weaTrendChartModel})
           }
         }
       }

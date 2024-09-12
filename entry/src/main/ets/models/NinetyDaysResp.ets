@@ -70,6 +70,7 @@ export enum WeaTrendType {
 export class NinetyWeaTrend {
   weaTrendModel: NinetyWeaTrendModel[] = []
   weaTrendChartModel: NinetyWeaTrendChartModel = {} as NinetyWeaTrendChartModel
+  ninetyData: NinetyModel[] = []
 }
 
 export class NinetyWeaTrendModel {

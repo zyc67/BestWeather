@@ -199,5 +199,5 @@ export function uint8ArrayToString(unit: Uint8Array): string {
 
 export function uint8ArrayToString2(uint8Array: Uint8Array): string {
   const textDecoder = util.TextDecoder.create("utf-8")
-  return textDecoder.decodeWithStream(uint8Array, { stream: false })
+  return textDecoder.decodeToString(uint8Array, { stream: false })
 }

@@ -28,7 +28,7 @@ export struct ThemeListView {
                 .fontColor(theme.theme_id === this.usedThemeId && this.type === this.usedThemeType ? '#FFFFFF' : '#333333')
                 .onClick(() => {
                   if (theme.theme_id !== this.usedThemeId || this.type !== this.usedThemeType) {
-                    console.log('1111111111_' + theme.theme_name + '_' + this.type)
+                    // console.log(theme.theme_name + '_' + this.type)
                     this.themeUsedAction(theme.theme_id!, this.type)
                   }
                 })

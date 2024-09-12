@@ -26,7 +26,7 @@ export class HttpManager {
       return Promise.reject(e)
     })
     if (respType == 0) { // 直接处理
-      return JSON.parse(util.TextDecoder.create('utf-8').decodeWithStream(new Uint8Array(res.data as ArrayBuffer))) as T
+      return JSON.parse(util.TextDecoder.create('utf-8').decodeToString(new Uint8Array(res.data as ArrayBuffer))) as T
     } else if (respType == 1) { // gzip
       const jsonStr = pako.inflate(res.data, { to: 'string' }) as string
       console.log('接口返回' + jsonStr)
@@ -55,7 +55,7 @@ export class HttpManager {
       return Promise.reject(e)
     })
     if (respType == 0) { // 直接处理
-      return JSON.parse(util.TextDecoder.create('utf-8').decodeWithStream(new Uint8Array(res.data as ArrayBuffer))) as T
+      return JSON.parse(util.TextDecoder.create('utf-8').decodeToString(new Uint8Array(res.data as ArrayBuffer))) as T
     } else if (respType == 1) { // gzip
       let jsonStr = pako.inflate(res.data, { to: 'string' }) as string
       console.log('接口返回'+jsonStr)

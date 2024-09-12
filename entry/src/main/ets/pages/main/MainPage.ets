@@ -91,7 +91,7 @@ struct MainPage {
 
   build() {
     Column() {
-     Tabs({barPosition: BarPosition.End}) {
+     Tabs({barPosition: BarPosition.End, index: $$this.currentTabIndex}) {
         TabContent() {
           NinetyDayPage()
         }
@@ -118,9 +118,9 @@ struct MainPage {
      .edgeEffect(EdgeEffect.None)
      .animationDuration(0)
      .barBackgroundColor(Color.Black)
-     .onChange((index) => {
-       this.pageChange(index)
-     })
+     // .onChange((index) => {
+     //   this.pageChange(index)
+     // })
     }
     .height('100%')
     .width('100%')

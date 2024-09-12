@@ -1,0 +1,12 @@
+export const LeftMargin: number = 28
+export const RightMargin: number = 10
+export const WeaIconWidth: number = 10
+export const WeaIconHeight: number = 14
+export const LowTempBottom: number = 80
+export const HighTempBottom: number = 210
+export const TempHeight: number = 20
+export const LineBottom: number = 45
+export const LineLeft: number = LeftMargin + 10
+export const DateBottom: number = 30
+export const WeaIconBottom: number = 58
+export const lineHeight: number = 188

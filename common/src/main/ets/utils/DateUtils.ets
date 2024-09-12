@@ -9,3 +9,8 @@ export function getCurrentTimestamp() {
 export function getCurrentTimestampS() {
   return dayjs().unix()
 }
+
+// 获取当天0点时间戳 （毫秒）
+export function getCurrentDay() {
+  return dayjs().startOf('day').valueOf()
+}

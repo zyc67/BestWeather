@@ -1,6 +1,7 @@
 import dayjs from 'dayjs'
 import { ConditionDay, ConditionNight } from '../../../../../entry/src/main/ets/models/WeatherModel'
 import { getCurrentTimestamp } from '.'
+import { WeatherTypeMap, WeatherTypeMapShort } from '../constant'
 
 // 通过天气码和主题天气码匹配
 export function getWeaThemeType(weaId: string) {
@@ -91,3 +92,21 @@ export function getWeatherType(conditionDay: ConditionDay, conditionNight: Condi
   }
   return WeatherType.Sun
 }
+
+export function getWeatherDetailType(conditionDayWeaId: string, conditionNightWeaId: string, isShort: boolean) {
+  const dayDesc = getWeaDescFromWeaId(conditionDayWeaId, isShort)
+  const nightDesc = getWeaDescFromWeaId(conditionNightWeaId, isShort)
+  if (dayDesc === nightDesc) {
+    return dayDesc
+  }
+  return `${dayDesc}转${nightDesc}`
+}
+
+export function getWeaDescFromWeaId(weaId: string, isShort: boolean) {
+  const weaCode = parseInt(weaId)
+  if (weaCode < 0 || (weaCode > 35 && weaCode != 53)) {
+    return ''
+  }
+  return isShort ? WeatherTypeMapShort[weaId] : WeatherTypeMap[weaId]
+}
+
