@@ -71,6 +71,7 @@ export class NinetyWeaTrend {
   weaTrendModel: NinetyWeaTrendModel[] = []
   weaTrendChartModel: NinetyWeaTrendChartModel = {} as NinetyWeaTrendChartModel
   ninetyData: NinetyModel[] = []
+  calendarData: CalendarModel[] = []
 }
 
 export class NinetyWeaTrendModel {
@@ -88,4 +89,13 @@ export class NinetyWeaTrendChartModel {
   lowTemps: number[] = [] // 所有低温
   highTempMax: number = 0 // 高温最大值
   lowTempMin: number = 0 // 低温最小值
+}
+
+export class CalendarModel {
+  date: number = 0 // 时间戳
+  daySolar: number = 1 // 阳历日
+  dayLunar: string = '' // 阴历日
+  jieQi: string = '' // 节气
+  festival: string = '' // 节日
+  weaIcon: ResourceStr = '' // 天气图标
 }

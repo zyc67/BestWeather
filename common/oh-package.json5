@@ -4,8 +4,5 @@
   "description": "Please describe the basic information.",
   "main": "Index.ets",
   "author": "",
-  "license": "Apache-2.0",
-  "dependencies": {
-    "entry": "file:../entry"
-  }
+  "license": "Apache-2.0"
 }

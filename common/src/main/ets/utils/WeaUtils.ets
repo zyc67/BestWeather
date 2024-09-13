@@ -1,7 +1,7 @@
 import dayjs from 'dayjs'
 import { ConditionDay, ConditionNight } from '../../../../../entry/src/main/ets/models/WeatherModel'
 import { getCurrentTimestamp } from '.'
-import { WeatherTypeMap, WeatherTypeMapShort } from '../constant'
+import { WeaIconDayDict, WeaIconNightDict, WeatherTypeMap, WeatherTypeMapShort } from '../constant'
 
 // 通过天气码和主题天气码匹配
 export function getWeaThemeType(weaId: string) {
@@ -108,5 +108,21 @@ export function getWeaDescFromWeaId(weaId: string, isShort: boolean) {
     return ''
   }
   return isShort ? WeatherTypeMapShort[weaId] : WeatherTypeMap[weaId]
+}
+
+/**
+ * 获取天气图标
+ * @param weaId 白天weaId/晚上weaId
+ * @param dayType 0:白天夜间图标； 1:白天白天图标； 2:夜间夜间图标
+ */
+export function getWeaIcon(weaId: string, dayType: number) {
+  if (weaId.length) {
+    if (dayType === 1) {
+      return WeaIconDayDict[weaId]
+    } else {
+      return WeaIconNightDict[weaId]
+    }
+  }
+  return 'ui_ic_default'
 }
 

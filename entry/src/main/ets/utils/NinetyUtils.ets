@@ -1,6 +1,8 @@
-import { getWeatherType, WeatherType, getCurrentDay } from '@bw/common'
-import { NinetyModel, NinetyWeaTrend, NinetyWeaTrendModel, NinetyWeaTrendChartModel, WeaTrendType } from '../models/NinetyDaysResp'
+import { getWeatherType, WeatherType, getCurrentDay, getWeaIcon } from '@bw/common'
+import { NinetyModel, NinetyWeaTrend, NinetyWeaTrendModel, NinetyWeaTrendChartModel, WeaTrendType,
+  CalendarModel } from '../models/NinetyDaysResp'
 import dayjs from 'dayjs'
+import { Solar } from 'lunar'
 
 export class NinetyUtils {
   static getWeaTrendData(ninetyData: NinetyModel[]) {
@@ -8,7 +10,6 @@ export class NinetyUtils {
     let lowTemps: number[] = [] // 所有低温
     let highTempMax: number = Number.MIN_VALUE // 高温最大值
     let lowTempMin: number = Number.MAX_VALUE // 低温最小值
-    const weaTrendChartModel: NinetyWeaTrendChartModel = new NinetyWeaTrendChartModel()
 
     let preHighTemp = 0 // 前一天高温
     let preLowTemp = 0 // 前一天低温
@@ -20,6 +21,7 @@ export class NinetyUtils {
     let snowIndexes: number[] = []// 降雪
 
     const validNinetyData:NinetyModel[] = []
+    const calendarData: CalendarModel[] = []
     for (let index = 0; index < ninetyData.length; index++) {
       const model = ninetyData[index]
       // 今天 + 之后 的天气数据
@@ -43,13 +45,6 @@ export class NinetyUtils {
       if (nextLowTemp < lowTempMin) {
         lowTempMin = nextLowTemp
       }
-
-
-      weaTrendChartModel.highTemps = highTemps
-      weaTrendChartModel.lowTemps = lowTemps
-      weaTrendChartModel.highTempMax = highTempMax
-      weaTrendChartModel.lowTempMin = lowTempMin
-
 
       // 高、低温
       if (nextHighTemp >= 35) {
@@ -87,8 +82,37 @@ export class NinetyUtils {
       } else if (weaType == WeatherType.Snow) {
         snowIndexes.push(index)
       }
+
+      calendarData.push(NinetyUtils.handleCalendarData(model))
     }
 
+    const ninetyWeaTrend: NinetyWeaTrend = new NinetyWeaTrend()
+    ninetyWeaTrend.weaTrendModel = NinetyUtils.handleChartData(ninetyData, hotIndexes, coldIndexes, tempUpIndexes, tempDownIndexes, rainIndexes, snowIndexes)
+    ninetyWeaTrend.weaTrendChartModel = NinetyUtils.handleTrendData(highTemps, lowTemps, highTempMax, lowTempMin)
+    ninetyWeaTrend.ninetyData = validNinetyData
+    ninetyWeaTrend.calendarData = calendarData
+    return ninetyWeaTrend
+  }
+
+  // 趋势汇总
+  private static handleTrendData(highTemps: number[], lowTemps: number[], highTempMax: number, lowTempMin: number) {
+    const weaTrendChartModel: NinetyWeaTrendChartModel = new NinetyWeaTrendChartModel()
+    weaTrendChartModel.highTemps = highTemps
+    weaTrendChartModel.lowTemps = lowTemps
+    weaTrendChartModel.highTempMax = highTempMax
+    weaTrendChartModel.lowTempMin = lowTempMin
+    return weaTrendChartModel
+  }
+
+  // 趋势图
+  private static handleChartData(
+    ninetyData: NinetyModel[],
+    hotIndexes: number[],
+    coldIndexes: number[],
+    tempUpIndexes: number[],
+    tempDownIndexes: number[],
+    rainIndexes: number[],
+    snowIndexes: number[]) {
     const ninetyWeaTrendModel: NinetyWeaTrendModel[] = []
 
     // 高温
@@ -169,10 +193,26 @@ export class NinetyUtils {
     }
     ninetyWeaTrendModel.push(snow)
 
-    const ninetyWeaTrend: NinetyWeaTrend = new NinetyWeaTrend()
-    ninetyWeaTrend.weaTrendModel = ninetyWeaTrendModel
-    ninetyWeaTrend.weaTrendChartModel = weaTrendChartModel
-    ninetyWeaTrend.ninetyData = validNinetyData
-    return ninetyWeaTrend
+    return ninetyWeaTrendModel
+  }
+
+  // 日历
+  private static handleCalendarData(model: NinetyModel) {
+    const calendar = new CalendarModel()
+    const solar = Solar.fromDate(new Date(model.ptime))
+    const lunar = solar.getLunar()
+
+    calendar.date = model.ptime
+    calendar.daySolar = solar.getDay()
+    calendar.dayLunar = lunar.getDayInChinese()
+    if (calendar.dayLunar === '初一') {
+      calendar.dayLunar = lunar.getMonthInChinese() + '月'
+    }
+    calendar.jieQi = lunar.getJieQi()
+    const solarFestivals = solar.getFestivals()
+    const lunarFestivals = lunar.getFestivals()
+    calendar.festival = solarFestivals.length ? solarFestivals[0] : (lunarFestivals.length ? lunarFestivals[0] : '')
+    calendar.weaIcon = getWeaIcon(model.conditionDay.cnwid ? model.conditionDay.cnwid.toString() : '', 1)
+    return calendar
   }
 }

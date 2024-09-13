@@ -79,3 +79,49 @@ export const WeatherTypeMapShort: Record<string, string> = {
   '35': '轻雾',
   '53': '霾'
 }
+
+//获取天气图标名称数组 白天
+export const WeaIconDayDict: Record<string, string> = {
+  '0': 'ui_ic_sunny', '1': 'ui_ic_cloudy',
+  '2': 'ui_ic_overcast','3': 'ui_ic_shower',
+  '4': 'ui_ic_thundeshower','5': 'ui_ic_thundeshowerhail',
+  '6': 'ui_ic_rainsnow','7': 'ui_ic_lightrain',
+  '8': 'ui_ic_moderaterain','9': 'ui_ic_heavyrain',
+  '10': 'ui_ic_rainstorm','11': 'ui_ic_rainstorm',
+  '12': 'ui_ic_rainstorm','13': 'ui_ic_showersnow',
+  '14': 'ui_ic_lightsnow','15': 'ui_ic_moderatesnow',
+  '16': 'ui_ic_heavysnow','17': 'ui_ic_heavysnow',
+  '18': 'ui_ic_fog','19': 'ui_ic_sleet',
+  '20': 'ui_ic_sandstorm','21': 'ui_ic_lightrain',
+  '22': 'ui_ic_moderaterain','23': 'ui_ic_heavyrain',
+  '24': 'ui_ic_rainstorm','25': 'ui_ic_rainstorm',
+  '26': 'ui_ic_lightsnow','27': 'ui_ic_moderatesnow',
+  '28': 'ui_ic_heavysnow','29': 'ui_ic_dust',
+  '30': 'ui_ic_dust','31': 'ui_ic_sandstorm',
+  '32': 'ui_ic_sandstorm','33': 'ui_ic_sandstorm',
+  '34': 'ui_ic_lightsnow','35': 'ui_ic_fog',
+  '53': 'ui_ic_haze'
+}
+
+//获取天气图标名称数组 晚上
+export const WeaIconNightDict: Record<string, string> = {
+  '0': 'ui_ic_nightsunny', '1': 'ui_ic_nightcloudy',
+  '2': 'ui_ic_overcast','3': 'ui_ic_nightrain',
+  '4': 'ui_ic_thundeshower','5': 'ui_ic_thundeshowerhail',
+  '6': 'ui_ic_rainsnow','7': 'ui_ic_lightrain',
+  '8': 'ui_ic_moderaterain','9': 'ui_ic_heavyrain',
+  '10': 'ui_ic_rainstorm','11': 'ui_ic_rainstorm',
+  '12': 'ui_ic_rainstorm','13': 'ui_ic_nightsown',
+  '14': 'ui_ic_lightsnow','15': 'ui_ic_moderatesnow',
+  '16': 'ui_ic_heavysnow','17': 'ui_ic_heavysnow',
+  '18': 'ui_ic_nightfog','19': 'ui_ic_sleet',
+  '20': 'ui_ic_sandstorm','21': 'ui_ic_lightrain',
+  '22': 'ui_ic_moderaterain','23': 'ui_ic_heavyrain',
+  '24': 'ui_ic_rainstorm','25': 'ui_ic_rainstorm',
+  '26': 'ui_ic_lightsnow','27': 'ui_ic_moderatesnow',
+  '28': 'ui_ic_heavysnow','29': 'ui_ic_dust',
+  '30': 'ui_ic_dust','31': 'ui_ic_sandstorm',
+  '32': 'ui_ic_sandstorm','33': 'ui_ic_sandstorm',
+  '34': 'ui_ic_lightsnow','35': 'ui_ic_nightfog',
+  '53': 'ui_ic_nighthaze'
+}

@@ -6,7 +6,7 @@ import { NinetyNaviTitleView } from '../../component/ninety/NinetyNaviTitleView'
 import { WeatherUtils, TOP_NAVI_HEIGHT, BaseCell } from '@bw/common'
 import { NinetyTrendView } from '../../component/ninety/NinetyTrendView'
 import { NinetyTrendChartView } from '../../component/ninety/NinetyTrendChartView'
-import { JSON } from '@kit.ArkTS'
+import { NinetyCalendarView } from '../../component/ninety/NinetyCalendarView'
 
 @Component
 export struct NinetyDayPage {
@@ -51,6 +51,11 @@ export struct NinetyDayPage {
           BaseCell() {
             NinetyTrendView({weaTrend: this.weaTrendModel})
             NinetyTrendChartView({ninetyData: this.ninetyData, weaTrendChartModel: this.weaTrendChartModel})
+          }
+        }
+        ListItem() {
+          BaseCell() {
+            NinetyCalendarView({ninetyData: this.ninetyData})
           }
         }
       }
