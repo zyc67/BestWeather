@@ -118,6 +118,7 @@ struct MainPage {
      .edgeEffect(EdgeEffect.None)
      .animationDuration(0)
      .barBackgroundColor(Color.Black)
+     // .scrollable(false)
      // .onChange((index) => {
      //   this.pageChange(index)
      // })

@@ -14,6 +14,7 @@ export struct NinetyDayPage {
   @State ninetyData: NinetyModel[] = []
   @State weaTrendModel: NinetyWeaTrendModel[] = []
   @State weaTrendChartModel: NinetyWeaTrendChartModel | undefined = undefined
+  @State calendarData: NinetyModel[][] = []
   @State title: string = '90天天气趋势'
   @State subtitle: string = ''
   @State hasMultiplyCities: boolean = false
@@ -35,6 +36,7 @@ export struct NinetyDayPage {
       this.ninetyData = ninetyWeaTrend.ninetyData
       this.weaTrendModel = ninetyWeaTrend.weaTrendModel
       this.weaTrendChartModel = ninetyWeaTrend.weaTrendChartModel
+      this.calendarData = NinetyUtils.addInvalidCalendarData(ninetyWeaTrend.calendarData)
     }
   }
 
@@ -55,7 +57,7 @@ export struct NinetyDayPage {
         }
         ListItem() {
           BaseCell() {
-            NinetyCalendarView({ninetyData: this.ninetyData})
+            NinetyCalendarView({calendarData: this.calendarData})
           }
         }
       }

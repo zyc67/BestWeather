@@ -1,6 +1,5 @@
 import { getWeatherType, WeatherType, getCurrentDay, getWeaIcon } from '@bw/common'
-import { NinetyModel, NinetyWeaTrend, NinetyWeaTrendModel, NinetyWeaTrendChartModel, WeaTrendType,
-  CalendarModel } from '../models/NinetyDaysResp'
+import { NinetyModel, NinetyWeaTrend, NinetyWeaTrendModel, NinetyWeaTrendChartModel, WeaTrendType } from '../models/NinetyDaysResp'
 import dayjs from 'dayjs'
 import { Solar } from 'lunar'
 
@@ -21,7 +20,7 @@ export class NinetyUtils {
     let snowIndexes: number[] = []// 降雪
 
     const validNinetyData:NinetyModel[] = []
-    const calendarData: CalendarModel[] = []
+    const calendarData: NinetyModel[] = []
     for (let index = 0; index < ninetyData.length; index++) {
       const model = ninetyData[index]
       // 今天 + 之后 的天气数据
@@ -198,21 +197,70 @@ export class NinetyUtils {
 
   // 日历
   private static handleCalendarData(model: NinetyModel) {
-    const calendar = new CalendarModel()
     const solar = Solar.fromDate(new Date(model.ptime))
     const lunar = solar.getLunar()
 
-    calendar.date = model.ptime
-    calendar.daySolar = solar.getDay()
-    calendar.dayLunar = lunar.getDayInChinese()
-    if (calendar.dayLunar === '初一') {
-      calendar.dayLunar = lunar.getMonthInChinese() + '月'
+    model.yymm = `${solar.getYear()}${solar.getMonth()}`
+    model.daySolar = solar.getDay()
+    model.dayLunar = lunar.getDayInChinese()
+    if (model.dayLunar === '初一') {
+      model.dayLunar = lunar.getMonthInChinese() + '月'
     }
-    calendar.jieQi = lunar.getJieQi()
+    model.jieQi = lunar.getJieQi()
     const solarFestivals = solar.getFestivals()
     const lunarFestivals = lunar.getFestivals()
-    calendar.festival = solarFestivals.length ? solarFestivals[0] : (lunarFestivals.length ? lunarFestivals[0] : '')
-    calendar.weaIcon = getWeaIcon(model.conditionDay.cnwid ? model.conditionDay.cnwid.toString() : '', 1)
-    return calendar
+    model.festival = model.festival ?? (solarFestivals.length ? solarFestivals[0] : (lunarFestivals.length ? lunarFestivals[0] : ''))
+    model.week = solar.getWeek()
+    model.weaIcon = getWeaIcon(model.conditionDay.cnwid ? model.conditionDay.cnwid.toString() : '', 1)
+    return model
+  }
+
+  static addInvalidCalendarData(calendarData: NinetyModel[]): NinetyModel[][] {
+    if (!calendarData || calendarData.length === 0) {
+      return []
+    }
+    const data: NinetyModel[][] = []
+    const first: NinetyModel = calendarData[0]
+    const firstDaysInMonth = dayjs(first.ptime).daysInMonth()
+    // 增加当月当前日期之前的日期
+    if (first.daySolar > 1) {
+      for (let i = first.daySolar - 1; i > 0; i--) {
+        calendarData.unshift(NinetyUtils.getCalendarModel(first.ptime - (first.daySolar - i) * 24 * 3600 * 1000))
+      }
+    }
+    const firstDay = calendarData[0]
+    const solar = Solar.fromDate(new Date(firstDay.ptime))
+    const week = solar.getWeek()
+    for (let i = week - 1; i >= 0; i--) {
+      calendarData.unshift(NinetyUtils.getEmptyCalendarModel())
+    }
+    // 增加当月超过90天之后的日期
+    const last: NinetyModel = calendarData[calendarData.length - 1]
+    const lastDaysInMonth = dayjs(last.ptime).daysInMonth()
+    if (lastDaysInMonth > last.daySolar) {
+      for (let i = 1; i <= lastDaysInMonth - last.daySolar; i++) {
+        calendarData.push(NinetyUtils.getCalendarModel(last.ptime + i * 24 * 3600 * 1000))
+      }
+    }
+    data.push(calendarData.splice(0, week + firstDaysInMonth))
+    while (calendarData.length) {
+      const daysInMonth = dayjs(calendarData[0].ptime).daysInMonth()
+      data.push(calendarData.splice(0, daysInMonth))
+    }
+    return data
+  }
+
+  private static getCalendarModel(ptime: number): NinetyModel {
+    const model: NinetyModel = new NinetyModel()
+    model.ptime = ptime
+    const data = NinetyUtils.handleCalendarData(model)
+    model.weaIcon = ''
+    return data
+  }
+
+  private static getEmptyCalendarModel(): NinetyModel {
+    const model: NinetyModel = new NinetyModel()
+    model.ptime = 0
+    return model
   }
 }
