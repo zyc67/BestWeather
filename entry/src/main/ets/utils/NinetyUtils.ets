@@ -244,8 +244,15 @@ export class NinetyUtils {
     }
     data.push(calendarData.splice(0, week + firstDaysInMonth))
     while (calendarData.length) {
+      const days: NinetyModel[] = []
+      const firstDay = calendarData[0]
+      const solar = Solar.fromDate(new Date(firstDay.ptime))
+      const week = solar.getWeek()
+      for (let i = week - 1; i >= 0; i--) {
+        days.unshift(NinetyUtils.getEmptyCalendarModel())
+      }
       const daysInMonth = dayjs(calendarData[0].ptime).daysInMonth()
-      data.push(calendarData.splice(0, daysInMonth))
+      data.push(days.concat(calendarData.splice(0, daysInMonth)))
     }
     return data
   }

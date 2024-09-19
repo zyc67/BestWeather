@@ -2,7 +2,25 @@
 export struct NinetyNaviTitleView {
   @Prop title: string
   @Prop subtitle: string
-  @Prop hasMultiplyCities: boolean
+  @Prop cityCount: number
+  @Link isShowSheet: boolean
+  @BuilderParam sheetContent: () => void = this.empty
+
+  @Builder empty() {
+    Column() {
+
+    }
+  }
+
+  @Builder titleBuilder() {
+    Column() {
+      Text('此处显示城市列表已添加的城市')
+    }
+    .width('100%')
+    .height(60)
+    .justifyContent(FlexAlign.Center)
+    .backgroundColor(Color.Red)
+  }
 
   build() {
     Row() {
@@ -16,7 +34,7 @@ export struct NinetyNaviTitleView {
           Span(this.subtitle)
             .fontColor('#FFFFFF')
             .fontSize(17)
-          if (this.hasMultiplyCities) {
+          if (this.cityCount) {
             ImageSpan($r('app.media.icon_drop_down'))
               .width(24)
               .height(7)
@@ -27,6 +45,21 @@ export struct NinetyNaviTitleView {
               })
           }
         }
+        .bindSheet($$this.isShowSheet, this.sheetContent(), {
+          height: Math.min((this.cityCount + 1) * 60, 300),
+          showClose: true,
+          title: {
+            title: '此处显示城市列表已添加的城市',
+            // subtitle: '哈哈'
+          }
+          // title: this.titleBuilder()
+        })
+        // .onDisAppear(() => {
+        //   this.isShowSheet = !this.isShowSheet
+        // })
+        .onClick(() => {
+          this.isShowSheet = !this.isShowSheet
+        })
       }
       .justifyContent(FlexAlign.End)
       .layoutWeight(1)

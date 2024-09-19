@@ -7,6 +7,7 @@ import { WeatherUtils, TOP_NAVI_HEIGHT, BaseCell } from '@bw/common'
 import { NinetyTrendView } from '../../component/ninety/NinetyTrendView'
 import { NinetyTrendChartView } from '../../component/ninety/NinetyTrendChartView'
 import { NinetyCalendarView } from '../../component/ninety/NinetyCalendarView'
+import { City } from '../../models/WeatherModel'
 
 @Component
 export struct NinetyDayPage {
@@ -17,18 +18,22 @@ export struct NinetyDayPage {
   @State calendarData: NinetyModel[][] = []
   @State title: string = '90天天气趋势'
   @State subtitle: string = ''
-  @State hasMultiplyCities: boolean = false
+  @State allCities: City[] = []
+  @State isShowSheet: boolean = false
 
   aboutToAppear(): void {
-    this.requestNinetyDaysData()
+    this.getNinetyDaysData()
   }
 
-  async requestNinetyDaysData() {
+  async getNinetyDaysData() {
     const allCities = await WeatherUtils.getAllCities()
-    this.hasMultiplyCities = allCities.length > 1
     const city = allCities[0]
     this.subtitle = city.localizedname || ''
+    this.allCities = allCities
+    this.requestNinetyDaysData(city)
+  }
 
+  async requestNinetyDaysData(city: City) {
     const ninetyDataResp = await HttpUtils.getNinetyDaysData<NinetyDaysResp>(city.citycode || '')
     if (ninetyDataResp.resultcode === '0') {
       const ninetyData = ninetyDataResp.data.dailys.dailyweathers
@@ -40,9 +45,40 @@ export struct NinetyDayPage {
     }
   }
 
+  switchCity(city: City) {
+    this.subtitle = city.localizedname || ''
+    this.requestNinetyDaysData(city)
+  }
+
+  @Builder sheetContent() {
+    Column() {
+      ForEach(this.allCities, (city: City) => {
+        Column() {
+          Text(city.localizedname)
+        }
+        .width('100%')
+        .height(60)
+        .justifyContent(FlexAlign.Center)
+        .borderColor({
+          bottom: '#FFFFFF'
+        })
+        .borderWidth({
+          bottom: 1
+        })
+        .onClick(() => {
+          this.isShowSheet = !this.isShowSheet
+          this.switchCity(city)
+        })
+      })
+    }
+    .width('100%')
+  }
+
   build() {
     Column() {
-      NinetyNaviTitleView({title: this.title, subtitle: this.subtitle, hasMultiplyCities: this.hasMultiplyCities})
+      NinetyNaviTitleView({title: this.title, subtitle: this.subtitle, cityCount: this.allCities.length, isShowSheet: this.isShowSheet, sheetContent: () => {
+        this.sheetContent()
+      }})
         .width('100%')
         .height(this.topRectHeight + 50)
         .padding({
