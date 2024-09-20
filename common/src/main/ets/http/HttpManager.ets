@@ -13,12 +13,12 @@ import display from '@ohos.display'
 import { util } from '@kit.ArkTS';
 
 export class HttpManager {
-  static async getUrl<T>(baseUrl: string, path: string, parameters: Record<string, Object>, getType: number, respType: number): Promise<T> {
-    const res: AxiosResponse<T> = await axios.get<T, AxiosResponse<T>>(path, {
-      url: path,
-      method: 'GET',
-      baseURL: baseUrl,
-      params: await HttpManager.getParams(parameters, baseUrl, getType),
+  static async getUrl<T>(url: string, parameters: Record<string, Object>, getType: number, respType: number): Promise<T> {
+    const res: AxiosResponse<T> = await axios.get<T, AxiosResponse<T>>(url, {
+      // url: baseUrl + path,
+      // method: 'GET',
+      // baseURL: baseUrl,
+      params: await HttpManager.getParams(parameters, url, getType),
       responseEncoding: 'utf-8',
       responseType: 'array_buffer',
       readTimeout: 20000
@@ -71,7 +71,7 @@ export class HttpManager {
     }
     if (getType === 0) {
       // 西安气象新接口统一处理apikey和language
-      if (host === baseUrl || host === baseUrlTest) {
+      if (host.indexOf(baseUrl) !== -1 || host.indexOf(baseUrlTest) !== -1) {
         parameters['apikey'] = apiKey
         parameters['language'] = language
       }

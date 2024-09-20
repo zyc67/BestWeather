@@ -30,6 +30,9 @@ export const baseHotCityUrl: string = 'https://hot.zuimeitianqi.com/'
 // 万年历
 export const baseCalendarUrl: string = 'https://zmcalender-api.colaapp.cn/'
 
+export const baseDBUrl: string = 'https://zmdb.zuimeitianqi.com/zmDbServer/'
+export const baseDBPath: string = '4.0/'
+
 // path
 // 天气主接口
 export const baseWeatherPath: string = 'openWeatherDataService/v1/weather'

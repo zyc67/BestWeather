@@ -1,13 +1,17 @@
 import { WeatherUtils, PFUtils, HttpUtils, getCurrentTheme, getWeaThemeType, receiveEmitter, isDayTime, ThemeBgDB, LONGITUDE,
-  LATITUDE, CHANGE_THEME_EVENT_ID } from '@bw/common'
+  LATITUDE, CHANGE_THEME_EVENT_ID,
+  BaseCell,
+  TOP_NAVI_HEIGHT} from '@bw/common'
 import {
   AdditionalLiveInfos,
   Alert, City, Condition, Dailys, Hourlys, Radar, ToDayAqi, WeaSummary } from '../../models/WeatherModel'
 import dayjs from 'dayjs'
 import isToday from 'dayjs/plugin/isToday'
+import { WeatherInfoView } from '../WeatherInfoView'
 
 @Component
 export struct WeaView {
+  private topRectHeight = px2vp(AppStorage.get<number>(TOP_NAVI_HEIGHT) || 0)
   city: City = {}
   @State themeBgImage: ResourceStr = $r('app.media.theme_bg_default')
 
@@ -113,9 +117,39 @@ export struct WeaView {
         .width('100%')
         .height('100%')
         .objectFit(ImageFit.Cover)
-      Row() {
-        Text(this.city.localizedname)
+      Column() {
+        List({space: 12}) {
+          ForEach([1, 2, 3, 4, 5, 6, 7, 8, 9], (item: number) => {
+            ListItem() {
+              if (item === 9) {
+                BaseCell({bgColor: '#FFFFFF'}) {
+                  WeatherInfoView()
+                }
+              } else {
+                BaseCell() {
+                  Column() {
+                    Text(item.toString())
+                  }
+                  .height(100)
+                }
+              }
+            }
+          })
+        }
+        .scrollBar(BarState.Off)
+        // .nestedScroll({
+        //   scrollForward: NestedScrollMode.SELF_FIRST,
+        //   scrollBackward: NestedScrollMode.PARENT_FIRST
+        // })
       }
+      .width('100%')
+      .padding({
+        left: 8,
+        right: 8
+      })
+      .margin({
+        top: 60 + this.topRectHeight
+      })
     }
     .width('100%')
     .height('100%')

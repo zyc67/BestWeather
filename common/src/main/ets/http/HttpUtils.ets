@@ -5,14 +5,16 @@ import { EnvType, environment, baseUrl, baseUrlTest, baseWeatherPath, cityManage
   baseUrl_SH,
   themeListPath,
   themeBgImagePath,
-  ninetyDaysPath} from './HttpConstant'
+  ninetyDaysPath,
+  baseDBUrl,
+  apiKeyXiAn,
+  baseDBPath} from './HttpConstant'
 import { isEmpty } from '../utils'
 import { CommonResp } from '../../../../../entry/src/main/ets/models/ThemeModel'
 import { util } from '@kit.ArkTS'
 import pako from 'pako'
 import { ThemeListDB } from '../db/ThemeListDB'
-import { DEFAULT_THEME_ID, SCREEN_HEIGHT, SCREEN_WIDTH } from '../constant'
-import { emitter } from '@kit.BasicServicesKit'
+import { SCREEN_HEIGHT, SCREEN_WIDTH } from '../constant'
 import { ThemeBgDB } from '../../../../Index'
 
 export class HttpUtils {
@@ -48,7 +50,7 @@ export class HttpUtils {
 
     const host = environment === EnvType.Release ? baseUrl : baseUrlTest
     console.log('主接口请求' + host + baseWeatherPath + JSON.stringify(params))
-    return HttpManager.getUrl<T>(host, baseWeatherPath, params, 0, 1)
+    return HttpManager.getUrl<T>(host + baseWeatherPath, params, 0, 1)
   }
 
   static getNinetyDaysData<T>(cityCode: string): Promise<T> {
@@ -60,7 +62,7 @@ export class HttpUtils {
 
     const host = environment === EnvType.Release ? baseUrl : baseUrlTest
     console.log('主接口请求' + host + baseWeatherPath + JSON.stringify(params))
-    return HttpManager.getUrl<T>(host, ninetyDaysPath, params, 0, 1)
+    return HttpManager.getUrl<T>(host + ninetyDaysPath, params, 0, 1)
   }
 
   /**
@@ -82,7 +84,7 @@ export class HttpUtils {
     params['codeType'] = 0 // 编码类型 0表示最美编码；1表示Accu；2表示adcode（民政部编码）
 
     const host = environment === EnvType.Release ? baseUrl : baseUrlTest
-    return HttpManager.getUrl<T>(host, cityManagerWeatherPath, params, 0, 1)
+    return HttpManager.getUrl<T>(host + cityManagerWeatherPath, params, 0, 1)
   }
 
   /**
@@ -95,7 +97,7 @@ export class HttpUtils {
     params['q'] = name
     params['web'] = 1
 
-    return HttpManager.getUrl<T>(baseSearchCityUrl, searchCityPath, params, 0, 0)
+    return HttpManager.getUrl<T>(baseSearchCityUrl + searchCityPath, params, 0, 0)
   }
 
   static getCalendar<T>() {
@@ -117,7 +119,7 @@ export class HttpUtils {
   }
 
   static async getThemeList(): Promise<CommonResp> {
-    const result = await HttpManager.getUrl<CommonResp>(baseUrl_SH, themeListPath, {}, 2, 0)
+    const result = await HttpManager.getUrl<CommonResp>(baseUrl_SH + themeListPath, {}, 2, 0)
     const base64Helper = new util.Base64Helper()
     const decodeData = base64Helper.decodeSync(result.data)
     const jsonStr = pako.inflate(decodeData, { to: 'string' }) as string
@@ -154,5 +156,16 @@ export class HttpUtils {
     console.log(`set 11111111111_cityCode=${cityCode}_themeId=${themeId}_weaId=${weaId}_isDay=${isDay}_url=${result.data}`);
 
     return result
+  }
+
+  static getWeatherInfoList<T>(createTime: string, pageSize: number = 9) {
+    let params: Record<string, Object> = {}
+    params['apikey'] = apiKeyXiAn
+    params['procCode'] = '3088'
+    if (createTime.length > 0) {
+      params['createTime'] = createTime
+    }
+    params['count'] = pageSize
+    return HttpManager.getUrl<T>(baseDBUrl + baseDBPath, params, 0, 0)
   }
 }

@@ -1,5 +1,6 @@
 @Component
 export struct BaseCell {
+  @Prop bgColor: ResourceColor = '#24FFFFFF'
   @BuilderParam contentBuilder: () => void
 
   build() {
@@ -8,6 +9,6 @@ export struct BaseCell {
     }
     .width('100%')
     .borderRadius(6)
-    .backgroundColor('#24FFFFFF')
+    .backgroundColor(this.bgColor)
   }
 }
