@@ -9,6 +9,7 @@ import dayjs from 'dayjs'
 import isToday from 'dayjs/plugin/isToday'
 import { WeatherInfoView } from '../WeatherInfoView'
 import { WeaViewType } from '../../utils/NinetyUtils'
+// import { WeatherInfoViewLazy } from '../WeatherInfoViewLazy'
 
 @Component
 export struct WeaView {
@@ -125,7 +126,7 @@ export struct WeaView {
       url = result.data
     }
     this.themeBgImage = url || $r('app.media.theme_bg_default')
-    console.log('get 11111111111_' + url)
+    // console.log('get 11111111111_' + url)
   }
 
   switchSecondView() {
@@ -147,6 +148,7 @@ export struct WeaView {
               if (item === WeaViewType.WeatherInfo) {
                 BaseCell({bgColor: '#FFFFFF'}) {
                   WeatherInfoView()
+                  // WeatherInfoViewLazy()
                 }
               } else {
                 BaseCell() {
