@@ -9,18 +9,21 @@ export struct BaseList {
   @Prop footerRefreshTitle: string = '努力加载中...'
   @Prop footerEndTitle: string = '我是有底线的'
   @Prop noData: boolean = false
+  @Prop nestedScroll: NestedScrollOptions
+  scroller: Scroller = new Scroller()
 
   @BuilderParam renderItem: (item: object) => void = this.defaultItem
 
   @Builder defaultItem() {}
 
-  @State isRefreshing: boolean = false
+  @Link isRefreshing: boolean
   @State isLoadMoreData: boolean = false
   @State ratio: number = 1
   @State status: RefreshStatus = RefreshStatus.Inactive
 
   onRefresh: () => void = () => {}
   onLoadMoreData: () => void = () => {}
+  onLoad: (scroller: Scroller) => void = () => {}
 
   getHeaderTitle() {
     switch (this.status) {
@@ -76,7 +79,7 @@ export struct BaseList {
   build() {
     Column() {
       Refresh({refreshing: $$this.isRefreshing, builder: this.header}) {
-        List() {
+        List({scroller: this.scroller}) {
           ForEach(this.dataSource, (item: object) => {
             ListItem() {
               if (this.renderItem) {
@@ -88,6 +91,7 @@ export struct BaseList {
             this.footer()
           }
         }
+        .nestedScroll(this.nestedScroll)
         .scrollBar(BarState.Off)
         .onReachEnd(async () => {
           if (this.isRefreshing || this.isLoadMoreData) {
@@ -96,6 +100,9 @@ export struct BaseList {
           this.isLoadMoreData = true
           await this.onLoadMoreData()
           this.isLoadMoreData = false
+        })
+        .onAppear(() => {
+          this.onLoad(this.scroller)
         })
       }
       .pullToRefresh(true)

@@ -1,4 +1,4 @@
-import { BaseList, HttpUtils } from '@bw/common'
+import { BaseList, BaseNaviBar, HttpUtils } from '@bw/common'
 import { WeatherInfoModel, WeatherInfoResp } from '../models/WeatherInfoModel'
 import { WeatherInfoItem } from './WeatherInfoItem'
 
@@ -6,7 +6,12 @@ import { WeatherInfoItem } from './WeatherInfoItem'
 export struct WeatherInfoView {
   lastCreateTime: string = ''
 
+  @Consume @Watch('switchSecondView') isSecondView: boolean
+  @Consume @Watch('refresh') weatherInfoRefresh: boolean
+
   @State weatherInfoList: WeatherInfoModel[] = []
+
+  scroller: Scroller = new Scroller()
 
   aboutToAppear(): void {
     this.requestWeatherInfoList(true)
@@ -20,6 +25,17 @@ export struct WeatherInfoView {
     } else {
       this.weatherInfoList = this.weatherInfoList.concat(result.infoFlowList ?? [])
     }
+    this.weatherInfoRefresh = false
+  }
+
+  switchSecondView() {
+    if (!this.isSecondView) {
+      this.scroller.scrollToIndex(0)
+    }
+  }
+
+  refresh() {
+    this.scroller.scrollToIndex(0)
   }
 
   @Builder
@@ -28,16 +44,28 @@ export struct WeatherInfoView {
   }
 
   build() {
-    BaseList({
-      dataSource: this.weatherInfoList,
-      renderItem: this.renderItem,
-      onRefresh: () => {
-        this.requestWeatherInfoList(true)
-      },
-      onLoadMoreData: () => {
-        this.requestWeatherInfoList(false)
-      }
-    })
-      .height('100%')
+    Column() {
+      BaseNaviBar({title: '天气资讯', canBack: false})
+      BaseList({
+        dataSource: this.weatherInfoList,
+        renderItem: this.renderItem,
+        isRefreshing: this.weatherInfoRefresh,
+        nestedScroll: ({
+          scrollForward: this.isSecondView ? NestedScrollMode.SELF_ONLY : NestedScrollMode.PARENT_FIRST,
+          scrollBackward: this.isSecondView ? NestedScrollMode.SELF_ONLY : NestedScrollMode.PARENT_FIRST
+        }),
+        onRefresh: async () => {
+          await this.requestWeatherInfoList(true)
+        },
+        onLoadMoreData: async () => {
+          await this.requestWeatherInfoList(false)
+        },
+        onLoad:(scroller: Scroller) => {
+          this.scroller = scroller
+        }
+      })
+        .layoutWeight(1)
+    }
+    .height('100%')
   }
 }

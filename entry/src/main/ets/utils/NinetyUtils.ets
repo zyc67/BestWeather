@@ -271,3 +271,17 @@ export class NinetyUtils {
     return model
   }
 }
+
+export enum WeaViewType {
+  WisdomReminder, // 智慧提醒
+  Condition, // 实况
+  TodayTomorrow, // 今明
+  Hours, // 24小时
+  Days, // 15天
+  NinetyTrend, // 90天趋势
+  Aqi, // 空气质量
+  ConditionDetail, // 实况详情
+  LifeIndex, // 生活指数
+  RainMap, // 降雨地图
+  WeatherInfo, // 天气资讯
+}

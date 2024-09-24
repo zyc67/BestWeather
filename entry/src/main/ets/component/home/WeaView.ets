@@ -8,12 +8,27 @@ import {
 import dayjs from 'dayjs'
 import isToday from 'dayjs/plugin/isToday'
 import { WeatherInfoView } from '../WeatherInfoView'
+import { WeaViewType } from '../../utils/NinetyUtils'
 
 @Component
 export struct WeaView {
   private topRectHeight = px2vp(AppStorage.get<number>(TOP_NAVI_HEIGHT) || 0)
+  scroller: Scroller = new Scroller()
   city: City = {}
   @State themeBgImage: ResourceStr = $r('app.media.theme_bg_default')
+  @State list: WeaViewType[] = [
+    WeaViewType.WisdomReminder, // 智慧提醒
+    WeaViewType.Condition, // 实况
+    WeaViewType.TodayTomorrow, // 今明
+    WeaViewType.Hours, // 24小时
+    WeaViewType.Days, // 15天
+    WeaViewType.NinetyTrend, // 90天趋势
+    WeaViewType.Aqi, // 空气质量
+    WeaViewType.ConditionDetail, // 实况详情
+    WeaViewType.LifeIndex, // 生活指数
+    WeaViewType.RainMap, // 降雨地图
+    WeaViewType.WeatherInfo, // 天气资讯
+  ]
 
   @State condition: Condition = {}
   @State hours: Hourlys[] = []
@@ -23,6 +38,8 @@ export struct WeaView {
   @State daily: Dailys = {}
   @State alert: Alert[] = []
   @State lifeIndex: AdditionalLiveInfos = {}
+
+  @Consume @Watch('switchSecondView') isSecondView: boolean
 
   aboutToAppear(): void {
     this.registerThemeBgEmitter()
@@ -111,6 +128,12 @@ export struct WeaView {
     console.log('get 11111111111_' + url)
   }
 
+  switchSecondView() {
+    if (!this.isSecondView) {
+      this.scroller.scrollToIndex(0)
+    }
+  }
+
   build() {
     Stack() {
       Image(this.themeBgImage)
@@ -118,10 +141,10 @@ export struct WeaView {
         .height('100%')
         .objectFit(ImageFit.Cover)
       Column() {
-        List({space: 12}) {
-          ForEach([1, 2, 3, 4, 5, 6, 7, 8, 9], (item: number) => {
+        List({space: 12, scroller: this.scroller}) {
+          ForEach(this.list, (item: WeaViewType) => {
             ListItem() {
-              if (item === 9) {
+              if (item === WeaViewType.WeatherInfo) {
                 BaseCell({bgColor: '#FFFFFF'}) {
                   WeatherInfoView()
                 }
@@ -130,25 +153,31 @@ export struct WeaView {
                   Column() {
                     Text(item.toString())
                   }
-                  .height(100)
+                  .height(Math.random() * 200)
                 }
               }
             }
           })
         }
         .scrollBar(BarState.Off)
-        // .nestedScroll({
-        //   scrollForward: NestedScrollMode.SELF_FIRST,
-        //   scrollBackward: NestedScrollMode.PARENT_FIRST
-        // })
+        .onScrollIndex((start: number, end: number, center: number) => {
+          this.isSecondView = start === end
+        })
+        .onDidScroll((scrollOffset: number, scrollState: ScrollState) => {
+          const index = this.list.findIndex(obj => obj === WeaViewType.WeatherInfo)
+          if (index !== -1) {
+            const rect = this.scroller.getItemRect(index)
+            // console.log(`111111111111_${rect.x}_${rect.y}_${rect.width}_${rect.height}_${Math.floor(rect.y)}`)
+          }
+        })
       }
       .width('100%')
       .padding({
-        left: 8,
-        right: 8
+        left: this.isSecondView ? 0 : 8,
+        right: this.isSecondView ? 0 : 8
       })
       .margin({
-        top: 60 + this.topRectHeight
+        top: this.isSecondView ? 0 : 60 + this.topRectHeight
       })
     }
     .width('100%')

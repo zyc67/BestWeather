@@ -10,6 +10,9 @@ export struct WeatherInfoItem {
           .fontColor('#333333')
           .fontSize(19)
           .maxLines(2)
+          .textOverflow({
+            overflow: TextOverflow.Ellipsis
+          })
         Text(this.item.publishTime)
           .fontColor('#999999')
           .fontSize(13)

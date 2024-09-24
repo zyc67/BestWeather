@@ -11,6 +11,7 @@ import isToday from 'dayjs/plugin/isToday'
 @Component
 struct MainPage {
   private bottomRectHeight = px2vp(AppStorage.get<number>(BOTTOM_AVOID_AREA_HEIGHT) || 0)
+  tabbarHeight: number = this.bottomRectHeight + 50
 
   @State currentTabIndex: number = 0
   @State currentIndex: number = 0
@@ -19,6 +20,9 @@ struct MainPage {
   @State selectedColor: string = '#FFFFFF'
   @State normalColor: string = '#FFFFFF'
   @State tabbarBgColor: string = '#FFFFFF'
+
+  @Provide isSecondView: boolean = false
+  @Provide weatherInfoRefresh: boolean = false
 
   aboutToAppear(): void {
     this.getThemeData()
@@ -90,7 +94,7 @@ struct MainPage {
   }
 
   build() {
-    Column() {
+    Stack() {
      Tabs({barPosition: BarPosition.End, index: $$this.currentTabIndex}) {
         TabContent() {
           HomePage({changeIndexAction: (index: number) => {
@@ -114,7 +118,7 @@ struct MainPage {
        }
        .tabBar(this.tabBuilder('我的', 3))
      }
-     .barHeight(this.bottomRectHeight + 50)
+     .barHeight(this.tabbarHeight)
      .edgeEffect(EdgeEffect.None)
      .animationDuration(0)
      .barBackgroundColor(Color.Black)
@@ -122,6 +126,50 @@ struct MainPage {
      // .onChange((index) => {
      //   this.pageChange(index)
      // })
+
+      if (this.isSecondView) {
+        Row() {
+          Column({space: 4}) {
+            Image($r('app.media.content_tab_infoflow_pressed'))
+              .width(20)
+              .height(20)
+            Text('刷新')
+              .fontSize(12)
+              .fontColor($r('app.color.color_333'))
+          }
+          .justifyContent(FlexAlign.Center)
+          .layoutWeight(1)
+          .onClick(() => {
+            this.weatherInfoRefresh = true
+          })
+
+          Column({space: 4}) {
+            Image($r('app.media.content_tab_weather_normal'))
+              .width(20)
+              .height(20)
+            Text('返回天气')
+              .fontSize(12)
+              .fontColor($r('app.color.color_BBB'))
+          }
+          .justifyContent(FlexAlign.Center)
+          .layoutWeight(1)
+          .onClick(() => {
+            this.isSecondView = false
+          })
+        }
+        .backgroundColor(Color.White)
+        .width('100%')
+        .height(this.tabbarHeight)
+        .position({
+          top: '100%'
+        })
+        .translate({
+          y: -this.tabbarHeight
+        })
+        .padding({
+          bottom: this.bottomRectHeight
+        })
+      }
     }
     .height('100%')
     .width('100%')
