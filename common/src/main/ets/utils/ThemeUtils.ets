@@ -168,7 +168,7 @@ export async function getTabbarItemNormalColor() {
   if (theme.layout === 3) {
     return '#575757'
   }
-  return '#FFFFFF80'
+  return '#80FFFFFF'
 }
 
 // 获取tabbar选中状态颜色

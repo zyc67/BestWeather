@@ -1,9 +1,9 @@
-import { AbilityConstant, bundleManager, UIAbility, Want } from '@kit.AbilityKit';
+import { AbilityConstant, bundleManager, ConfigurationConstant, UIAbility, Want } from '@kit.AbilityKit';
 import { hilog } from '@kit.PerformanceAnalysisKit';
 import { window } from '@kit.ArkUI';
 import { BusinessError } from '@kit.BasicServicesKit';
 import { AlertDB, AqiDB, CityDB, ConditionDB, DailysDB, DescDB, HoursDB, LifeIndexDB, PFUtils, RadarDB, ThemeListDB, ThemeBgDB,
-  BOTTOM_AVOID_AREA_HEIGHT, HAS_GUIDE, TOP_NAVI_HEIGHT, HAS_PRIVACY, SCREEN_WIDTH, SCREEN_HEIGHT, WeatherUtils } from '@bw/common';
+  BOTTOM_AVOID_AREA_HEIGHT, HAS_GUIDE, TOP_NAVI_HEIGHT, HAS_PRIVACY, SCREEN_WIDTH, SCREEN_HEIGHT, WeatherUtils, ColorModeUtils } from '@bw/common';
 
 export default class EntryAbility extends UIAbility {
   onCreate(want: Want, launchParam: AbilityConstant.LaunchParam): void {
@@ -13,6 +13,10 @@ export default class EntryAbility extends UIAbility {
     let bundleInfo = bundleManager.getBundleInfoForSelfSync(flag)
     let appId = bundleInfo.signatureInfo.appId;
     AppStorage.setOrCreate('aMap_AppId', appId);
+
+    // 应用深浅色适配
+    const colorMode: ConfigurationConstant.ColorMode = this.context.config.colorMode || ConfigurationConstant.ColorMode.COLOR_MODE_LIGHT
+    ColorModeUtils.setColorMode(colorMode.toString())
   }
 
   onDestroy(): void {

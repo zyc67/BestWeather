@@ -1,3 +1,4 @@
+
 export const TOP_NAVI_HEIGHT = 'top_navi_height'
 export const BOTTOM_AVOID_AREA_HEIGHT = 'bottom_avoid_area_height'
 export const BW_PREFERENCES_NAME = 'bw_preferences_name'
@@ -12,7 +13,7 @@ export const CURRENT_THEME_TYPE = 'current_theme_type' // 1经典 2简洁
 export const LONGITUDE = 'longitude'
 export const LATITUDE = 'latitude'
 
-
+export const COLOR_MODE = 'color_mode'
 
 
 export const DEFAULT_THEME_ID = '124'
