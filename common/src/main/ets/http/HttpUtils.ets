@@ -168,4 +168,12 @@ export class HttpUtils {
     params['count'] = pageSize
     return HttpManager.getUrl<T>(baseDBUrl + baseDBPath, params, 0, 0)
   }
+
+  static getWeatherInfoDetailData<T>(ID: number) {
+    let params: Record<string, Object> = {}
+    params['apikey'] = apiKeyXiAn
+    params['procCode'] = '3089'
+    params['id'] = ID
+    return HttpManager.getUrl<T>(baseDBUrl + baseDBPath, params, 0, 0)
+  }
 }

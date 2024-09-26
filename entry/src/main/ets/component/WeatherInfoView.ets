@@ -1,6 +1,7 @@
-import { BaseList, BaseNaviBar, HttpUtils } from '@bw/common'
+import { BaseList, BaseNaviBar, HttpUtils, RouterUtils } from '@bw/common'
 import { WeatherInfoModel, WeatherInfoResp } from '../models/WeatherInfoModel'
 import { WeatherInfoItem } from './WeatherInfoItem'
+import { call } from '@kit.TelephonyKit'
 
 @Component
 export struct WeatherInfoView {
@@ -41,6 +42,11 @@ export struct WeatherInfoView {
   @Builder
   renderItem(item: object) {
     WeatherInfoItem({item: item as WeatherInfoModel})
+      .onClick(() => {
+        RouterUtils.pushUrl('pages/weatherInfo/WeatherInfoDetailPage', {
+          ID: (item as WeatherInfoModel).id
+        })
+      })
   }
 
   build() {

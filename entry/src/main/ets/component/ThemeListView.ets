@@ -1,4 +1,6 @@
+import { getCurrentThemeId, RouterUtils } from '@bw/common'
 import { ThemeModel } from '../models/ThemeModel'
+import { router } from '@kit.ArkUI'
 
 @Component
 export struct ThemeListView {
@@ -43,6 +45,12 @@ export struct ThemeListView {
             .justifyContent(FlexAlign.SpaceBetween)
           }
           .width('100%')
+          .onClick(async () => {
+            RouterUtils.pushUrl('pages/webview/BaseWebPage', {
+              title: theme.theme_name,
+              url: (this.type === 2 ? theme.detail_url_concise : theme.detail_url) + '&isUse=' + (theme.theme_id === await getCurrentThemeId() ? 1 : 0)
+            })
+          })
         }
       })
     }

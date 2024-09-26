@@ -12,4 +12,12 @@ export class WeatherInfoModel {
   publishTime: string = ''
   source: string = ''
   title: string = ''
+  content: string = ''
+}
+
+export class WeatherInfoDetailResp {
+  resultCode?: string
+  resultInfo?: string
+  serverTime?: number // 服务器时间
+  infoFlow?: WeatherInfoModel
 }

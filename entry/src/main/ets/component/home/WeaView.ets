@@ -9,6 +9,8 @@ import dayjs from 'dayjs'
 import isToday from 'dayjs/plugin/isToday'
 import { WeatherInfoView } from '../WeatherInfoView'
 import { WeaViewType } from '../../utils/NinetyUtils'
+import { Theme } from '@ohos.arkui.theme'
+
 // import { WeatherInfoViewLazy } from '../WeatherInfoViewLazy'
 
 @Component
@@ -133,6 +135,10 @@ export struct WeaView {
     if (!this.isSecondView) {
       this.scroller.scrollToIndex(0)
     }
+  }
+
+  onWillApplyTheme(theme: Theme): void {
+    theme.colors.backgroundPrimary;
   }
 
   build() {

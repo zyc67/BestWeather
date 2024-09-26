@@ -4,6 +4,7 @@ export class Params {
   title?: string = ''
   url?: string = ''
   firstLaunch?: boolean = false
+  ID?: number = 0
 }
 
 export class RouterUtils {

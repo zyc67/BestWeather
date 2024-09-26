@@ -6,6 +6,7 @@
     "pages/splash/SelectThemePage",
     "pages/main/MainPage",
     "pages/city/CityAddPage",
-    "pages/theme/ThemeManagerPage"
+    "pages/theme/ThemeManagerPage",
+    "pages/weatherInfo/WeatherInfoDetailPage"
   ]
 }
