@@ -8,10 +8,11 @@ export class PFUtils {
   static dataPreferences: preferences.Preferences | null = null
   /**
    * 获取Preferences实例
+   * getContext必须在窗口创建后才可以调用，如果在ability中调用得到的是undefined，所以这里通过传参方式传入
    */
-  static async getPreferences(context: Context) {
+  static async getPreferences(context?: Context) {
     try {
-      PFUtils.dataPreferences = await preferences.getPreferences(context, BW_PREFERENCES_NAME)
+      PFUtils.dataPreferences = await preferences.getPreferences(context || getContext(), BW_PREFERENCES_NAME)
     } catch (e) {
       console.log((e as BusinessError).message)
     }
@@ -20,12 +21,12 @@ export class PFUtils {
   /**
    * 从缓存中移出指定的Preferences实例，若Preferences实例有对应的持久化文件，则同时删除其持久化文件。
    */
-  static async deletePreferences(context: Context) {
+  static async deletePreferences(context?: Context) {
     if (!PFUtils.dataPreferences) {
       await PFUtils.getPreferences(context)
     }
     try {
-      await preferences.deletePreferences(context, BW_PREFERENCES_NAME)
+      await preferences.deletePreferences(context || getContext(), BW_PREFERENCES_NAME)
     } catch (e) {
       console.log((e as BusinessError).message)
     }
@@ -37,7 +38,7 @@ export class PFUtils {
    * @param defValue
    * @returns
    */
-  static async get(key: string, defValue: preferences.ValueType, context: Context) {
+  static async get(key: string, defValue: preferences.ValueType, context?: Context) {
     if (!PFUtils.dataPreferences) {
       await PFUtils.getPreferences(context)
     }
@@ -55,7 +56,7 @@ export class PFUtils {
    * @param key
    * @param value
    */
-  static async put(key: string, value: preferences.ValueType, context: Context) {
+  static async put(key: string, value: preferences.ValueType, context?: Context) {
     if (!PFUtils.dataPreferences) {
       await PFUtils.getPreferences(context)
     }
@@ -74,7 +75,7 @@ export class PFUtils {
    * @param key
    * @param defValue
    */
-  static async delete(key: string, context: Context) {
+  static async delete(key: string, context?: Context) {
     if (!PFUtils.dataPreferences) {
       await PFUtils.getPreferences(context)
     }

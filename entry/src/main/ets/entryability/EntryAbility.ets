@@ -3,7 +3,9 @@ import { hilog } from '@kit.PerformanceAnalysisKit';
 import { window } from '@kit.ArkUI';
 import { BusinessError } from '@kit.BasicServicesKit';
 import { AlertDB, AqiDB, CityDB, ConditionDB, DailysDB, DescDB, HoursDB, LifeIndexDB, PFUtils, RadarDB, ThemeListDB, ThemeBgDB,
-  BOTTOM_AVOID_AREA_HEIGHT, HAS_GUIDE, TOP_NAVI_HEIGHT, HAS_PRIVACY, SCREEN_WIDTH, SCREEN_HEIGHT, WeatherUtils, ColorModeUtils } from '@bw/common';
+  BOTTOM_AVOID_AREA_HEIGHT, HAS_GUIDE, TOP_NAVI_HEIGHT, HAS_PRIVACY, SCREEN_WIDTH, SCREEN_HEIGHT, WeatherUtils, ColorModeUtils,
+  CURRENT_USER } from '@bw/common';
+import { UserUtils } from '../utils/UserUtils';
 
 export default class EntryAbility extends UIAbility {
   onCreate(want: Want, launchParam: AbilityConstant.LaunchParam): void {
@@ -77,6 +79,9 @@ export default class EntryAbility extends UIAbility {
         AppStorage.setOrCreate(SCREEN_WIDTH, w)
         AppStorage.setOrCreate(SCREEN_HEIGHT, h)
       })
+
+      this.setupUser()
+
       hilog.info(0x0000, 'testTag', 'Succeeded in loading the content.');
     });
   }
@@ -94,6 +99,11 @@ export default class EntryAbility extends UIAbility {
     await RadarDB.sharedManager().createTable(context)
     await ThemeListDB.sharedManager().createTable(context)
     await ThemeBgDB.sharedManager().createTable(context)
+  }
+
+  async setupUser() {
+    const user = await UserUtils.getCurrentUser(this.context)
+    AppStorage.setOrCreate(CURRENT_USER, user)
   }
 
   onWindowStageDestroy(): void {

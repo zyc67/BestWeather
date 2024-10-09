@@ -21,3 +21,6 @@ export const DEFAULT_THEME_TYPE = 1
 
 export const ADD_CITY_EVENT_ID = 1
 export const CHANGE_THEME_EVENT_ID = 2
+
+export const CURRENT_USER = 'current_user'
+export const CURRENT_USER_ID = 'current_user_id'
